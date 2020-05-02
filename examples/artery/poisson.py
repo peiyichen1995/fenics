@@ -8,6 +8,7 @@ from problems import ProblemWithNullSpace
 from solvers import SolverWithNullSpace
 from utils import my_cross
 from utils import build_nullspace
+from utils import XDMF2PVD
 
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
