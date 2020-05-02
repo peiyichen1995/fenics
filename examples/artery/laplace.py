@@ -20,10 +20,16 @@ output_dir = "./output/"
 mesh_dir = "./mesh/"
 
 # mesh
-MSH2XDMF(mesh_dir + "media_flatboundaries.msh",
-         mesh_dir + "mesh.xdmf", mesh_dir + "mf.xdmf")
+comm = MPI.comm_world
+rank = comm.Get_rank()
+if rank == 0:
+    MSH2XDMF(mesh_dir + "media_flatboundaries.msh",
+             mesh_dir + "mesh.xdmf", mesh_dir + "mf.xdmf")
+
 mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
                     "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
+
+exit()
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
