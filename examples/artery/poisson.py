@@ -2,6 +2,7 @@
 from dolfin import *
 from mshr import *
 import math
+import time
 
 # my imports
 from problems import ProblemWithNullSpace
@@ -98,7 +99,7 @@ psi_ti_2 = k1 * \
 psi = psi_MR + psi_P + psi_ti_1 + psi_ti_2
 
 # pressure
-P = Constant(0.1)
+P = Constant(10)
 
 # define variational problem
 Pi = psi * dx - dot(-P * n, u) * ds(1)
@@ -107,9 +108,12 @@ J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
 
 # solve variational problem
+start_time = time.time()
 problem = ProblemWithNullSpace(J, dPi, [], null_space)
 solver = SolverWithNullSpace()
 solver.solve(problem, u.vector())
+end_time = time.time()
+print("solved using {0} seconds".format(end_time - start_time))
 
 # write solution
 file = File(output_dir + "displacements.pvd")
