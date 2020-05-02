@@ -29,8 +29,6 @@ if rank == 0:
 mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
                     "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
 
-exit()
-
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
 
