@@ -56,11 +56,6 @@ e3 = grad(phi1)
 e1 = grad(phi2)
 e2 = my_cross(e3, e1)
 
-# normalize basis
-e1 = sqrt(inner(e1, e1))
-e2 = sqrt(inner(e2, e2))
-e3 = sqrt(inner(e3, e3))
-
 e1Project = project(e1, VV, solver_type="mumps")
 file = XDMFFile(output_dir + "e1.xdmf")
 file.write(e1Project, 0)
@@ -73,8 +68,12 @@ e3Project = project(e3, VV)
 file = XDMFFile(output_dir + "e3.xdmf")
 file.write(e3Project, 0)
 
-
 exit()
+
+# normalize basis
+e1 = sqrt(inner(e1, e1))
+e2 = sqrt(inner(e2, e2))
+e3 = sqrt(inner(e3, e3))
 
 # defin tissue orientation on the spatial varying basis
 theta = math.pi / 6
