@@ -56,6 +56,6 @@ file.write(e1Project, 0)
 # file = XDMFFile(output_dir + "e2.xdmf")
 # file.write(e2Project, 0, solver_type="mumps")
 
-e3Project = project(e3, VV)
+e3Project = project(e3, VV, solver_type="mumps")
 file = XDMFFile(output_dir + "e3.xdmf")
 file.write(e3Project, 0)
