@@ -61,6 +61,21 @@ e1 = sqrt(inner(e1, e1))
 e2 = sqrt(inner(e2, e2))
 e3 = sqrt(inner(e3, e3))
 
+e1Project = project(e1, VV)
+file = XDMFFile(output_dir + "e1.xdmf")
+file.write(e1Project, 0)
+
+e2Project = project(e2, VV)
+file = XDMFFile(output_dir + "e2.xdmf")
+file.write(e2Project, 0)
+
+e3Project = project(e3, VV)
+file = XDMFFile(output_dir + "e3.xdmf")
+file.write(e3Project, 0)
+
+
+exit()
+
 # defin tissue orientation on the spatial varying basis
 theta = math.pi / 6
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
@@ -108,12 +123,16 @@ J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
 
 # solve variational problem
-start_time = time.time()
+comm = MPI.comm_world
+rank = comm.Get_rank()
+if rank == 0:
+    start_time = time.time()
 problem = ProblemWithNullSpace(J, dPi, [], null_space)
 solver = SolverWithNullSpace()
 solver.solve(problem, u.vector())
-end_time = time.time()
-print("solved using {0} seconds".format(end_time - start_time))
+if rank == 0:
+    end_time = time.time()
+    print("solved using {0} seconds".format(end_time - start_time))
 
 # write solution
 file = File(output_dir + "displacements.pvd")
