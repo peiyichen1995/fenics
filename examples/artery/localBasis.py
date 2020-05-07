@@ -29,6 +29,7 @@ mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
+VV = VectorFunctionSpace(mesh, 'CG', 2)
 
 # functions
 phi1 = Function(V)
