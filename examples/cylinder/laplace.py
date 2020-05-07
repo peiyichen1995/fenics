@@ -36,9 +36,9 @@ phi = Function(V)
 bottom = CompiledSubDomain("near(x[2], side) && on_boundary", side=0.0)
 top = CompiledSubDomain("near(x[2], side) && on_boundary", side=3.0)
 inner = CompiledSubDomain(
-    "near(sqrt(x[0]*x[0]+x[1]*x[1]), side, 0.1) && on_boundary", side=1.0)
+    "near(x[0]*x[0]+x[1]*x[1], side, 0.1) && on_boundary", side=1.0)
 outer = CompiledSubDomain(
-    "near(sqrt(x[0]*x[0]+x[1]*x[1]), side, 0.1) && on_boundary", side=2.0)
+    "near(x[0]*x[0]+x[1]*x[1], side, 0.1) && on_boundary", side=4.0)
 
 # write mesh
 mesh_file = File(mesh_dir + "mesh.xml")
@@ -57,7 +57,7 @@ Pi = 0.5 * dot(grad(phi), grad(phi)) * dx
 dPi = derivative(Pi, phi, w)
 J = derivative(dPi, phi, v)
 
-# define variational problem for phi_1 and phi_2
+# define variational problem for phi_1 and phi_2s
 problem_1 = CustomProblem(J, dPi, bcs_1)
 problem_2 = CustomProblem(J, dPi, bcs_2)
 solver = CustomSolver()
@@ -72,11 +72,16 @@ phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "w")
 solver.solve(problem_1, phi.vector())
 phi1_pvd << phi
 phi1_h5.write(phi, "phi1")
+# write solutions
+file = File(output_dir + "phi1_displacements.pvd")
+file << phi
 
 # solve and write phi_2
 solver.solve(problem_2, phi.vector())
 phi2_pvd << phi
 phi2_h5.write(phi, "phi2")
+file = File(output_dir + "phi2_displacements.pvd")
+file << phi
 
 # close files
 phi1_h5.close()
