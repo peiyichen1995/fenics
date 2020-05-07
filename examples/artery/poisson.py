@@ -61,13 +61,13 @@ e1 = sqrt(inner(e1, e1))
 e2 = sqrt(inner(e2, e2))
 e3 = sqrt(inner(e3, e3))
 
-e1Project = project(e1, VV)
+e1Project = project(e1, VV, solver_type="mumps")
 file = XDMFFile(output_dir + "e1.xdmf")
 file.write(e1Project, 0)
 
-e2Project = project(e2, VV)
+e2Project = project(e2, VV, solver_type="mumps")
 file = XDMFFile(output_dir + "e2.xdmf")
-file.write(e2Project, 0)
+file.write(e2Project, 0, solver_type="mumps")
 
 e3Project = project(e3, VV)
 file = XDMFFile(output_dir + "e3.xdmf")
