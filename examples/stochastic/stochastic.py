@@ -37,10 +37,6 @@ mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
 
-mesh = UnitSquareMesh(10, 10)
-V = FunctionSpace(mesh, 'CG', 1)
-
-
 w, v, C, M = solve_covariance_EVP(
     lambda r: cov_exp(r, rho=0.2, sigma=1.0), mesh, V)
 
