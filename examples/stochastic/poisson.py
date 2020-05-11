@@ -51,6 +51,12 @@ phi2_h5.read(phi2, "phi2")
 phi1_h5.close()
 phi2_h5.close()
 
+# read in random filed
+Random_h5 = HDF5File(MPI.comm_world, output_dir + "Random.h5", "w")
+rf = Function(V)
+Random_h5.read(rf, "rf")
+Random_h5.close()
+
 # define orthorgonal basis
 e3 = grad(phi1)
 e1 = grad(phi2)

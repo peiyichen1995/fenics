@@ -55,7 +55,14 @@ print(error)
 print("Generating non-Gaussian random filed...")
 randomField = nonGauss(w, v, 0, 0.05, e)
 
-rF = set_fem_fun(randomField, V)
+rf = set_fem_fun(randomField, V)
 
 file = File("Random.pvd")
-file << rF
+file << rf
+
+# create files for visualization and storage
+Random_h5 = HDF5File(MPI.comm_world, output_dir + "Random.h5", "w")
+Random_h5.write(rf, "rf")
+
+# close files
+Random_h5.close()
