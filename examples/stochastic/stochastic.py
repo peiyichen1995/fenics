@@ -39,7 +39,7 @@ V = FunctionSpace(mesh, 'CG', 1)
 
 # mesh = UnitCubeMesh(5, 5, 5)
 # V = FunctionSpace(mesh, 'CG', 1)
-
+print("Generating Gaussian random filed...")
 w, v, C, M = solve_covariance_EVP(
     lambda r: cov_exp(r, rho=0.2, sigma=1.0), mesh, V)
 
@@ -52,9 +52,10 @@ e, error = trun_order(0.1, C, M, w)
 print(e)
 print(error)
 
+print("Generating non-Gaussian random filed...")
 randomField = nonGauss(w, v, 0, 0.05, e)
 
 rF = set_fem_fun(randomField, V)
 
-file = File(output_dir + "Random.pvd")
+file = File("Random.pvd")
 file << rF
