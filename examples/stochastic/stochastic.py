@@ -35,7 +35,7 @@ mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
                     "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
 
 # function space
-V = FunctionSpace(mesh, 'CG', 2)
+V = FunctionSpace(mesh, 'CG', 1)
 
 # mesh = UnitCubeMesh(5, 5, 5)
 # V = FunctionSpace(mesh, 'CG', 1)
