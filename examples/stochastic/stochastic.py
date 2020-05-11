@@ -56,5 +56,5 @@ randomField = nonGauss(w, v, 0, 0.05, e)
 
 rF = set_fem_fun(randomField, V)
 
-file = File(output_dir + "2D_Random.pvd")
+file = File(output_dir + "Random.pvd")
 file << rF
