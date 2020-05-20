@@ -2,17 +2,17 @@
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
 <Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
   <Domain>
-    <Grid Name="TimeSeries_f_25" GridType="Collection" CollectionType="Temporal">
+    <Grid Name="TimeSeries_f_23" GridType="Collection" CollectionType="Temporal">
       <Grid Name="mesh" GridType="Uniform">
-        <Topology NumberOfElements="1211" TopologyType="Tetrahedron" NodesPerElement="4">
-          <DataItem Dimensions="1211 4" NumberType="UInt" Format="HDF">e1.h5:/Mesh/0/mesh/topology</DataItem>
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">e1.h5:/Mesh/0/mesh/topology</DataItem>
         </Topology>
         <Geometry GeometryType="XYZ">
-          <DataItem Dimensions="370 3" Format="HDF">e1.h5:/Mesh/0/mesh/geometry</DataItem>
+          <DataItem Dimensions="1331 3" Format="HDF">e1.h5:/Mesh/0/mesh/geometry</DataItem>
         </Geometry>
         <Time Value="0" />
-        <Attribute Name="f_25" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="370 3" Format="HDF">e1.h5:/VisualisationVector/0</DataItem>
+        <Attribute Name="f_23" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">e1.h5:/VisualisationVector/0</DataItem>
         </Attribute>
       </Grid>
     </Grid>

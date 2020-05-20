@@ -29,9 +29,28 @@ n = FacetNormal(mesh)
 boundaries = MeshFunction('size_t', mesh, mesh.topology().dim() - 1)
 boundaries.set_all(0)
 boundary_inner = CompiledSubDomain(
-    "near(sqrt(x[0]*x[0]+x[1]*x[1]), side, 0.1) && on_boundary", side=1.0)
+    "near(x[2], side) && on_boundary", side=1.0)
 boundary_inner.mark(boundaries, 1)
 ds = Measure('ds', domain=mesh, subdomain_data=boundaries)
+
+# Define domain of three different layers
+eps = DOLFIN_EPS
+domain0 = AutoSubDomain(lambda x: x[2] < 0.2 + eps)
+domain1 = AutoSubDomain(lambda x: x[2] > 0.2 - eps and x[2] < 0.7 + eps)
+domain2 = AutoSubDomain(lambda x: x[2] > 0.7 - eps)
+
+# Have one function with tags of domains
+domains = MeshFunction('size_t', mesh, mesh.topology().dim())
+domain0.mark(domains, 0)
+domain1.mark(domains, 1)
+domain2.mark(domains, 2)
+
+# mark domains
+dx = Measure('dx', domain=mesh, subdomain_data=domains)
+
+# Save sub domains to VTK files
+file = File(mesh_dir + "subdomains.pvd")
+file << domains
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
@@ -82,14 +101,25 @@ I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
 I3 = det(C)
 
 # model parameters and material properties
-eta1 = 141
+eta1_0 = 141
+eta1_1 = 141 * 2
+eta1_2 = 141 * 3
+
 eta2 = 160
 eta3 = 3100
-delta = 2 * eta1 + 4 * eta2 + 2 * eta3
+
+delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
+delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
+delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
+
 e1 = 0.005
 e2 = 10
 k1 = 100000
 k2 = 0.04
+
+materials = [(eta1_0), (eta1_1), (eta1_2)]
+
+exit()
 
 # strain energy functionals
 psi_MR = eta1 * I1 + eta2 * I2 + eta3 * I3 - delta * ln(sqrt(I3))
