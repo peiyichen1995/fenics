@@ -1,4 +1,15 @@
 # system imports
+from __future__ import division
+import ufl
+import scipy.sparse.linalg as spla
+import numpy as np
+import scipy.linalg as dla
+import matplotlib.pyplot as plt
+import numpy.linalg as linalg
+from scipy.stats import gamma
+from scipy.stats import norm
+
+
 from dolfin import *
 from mshr import *
 import math
@@ -8,6 +19,8 @@ from problems import ProblemWithNullSpace
 from solvers import SolverWithNullSpace
 from utils import my_cross
 from utils import build_nullspace
+from problems import CustomProblem
+from solvers import CustomSolver
 
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
@@ -41,6 +54,7 @@ domain2 = AutoSubDomain(lambda x: x[2] > 0.7 - eps)
 
 # Have one function with tags of domains
 domains = MeshFunction('size_t', mesh, mesh.topology().dim())
+domains.set_all(0)
 domain0.mark(domains, 0)
 domain1.mark(domains, 1)
 domain2.mark(domains, 2)
@@ -56,6 +70,16 @@ file << domains
 V = FunctionSpace(mesh, 'CG', 2)
 VV = VectorFunctionSpace(mesh, 'CG', 2)
 VVV = TensorFunctionSpace(mesh, 'DG', 1)
+
+# mark boundary subdomians
+bottom = CompiledSubDomain("near(x[2], side) && on_boundary", side=0.0)
+top = CompiledSubDomain("near(x[2], side) && on_boundary", side=1.0)
+b = Expression(('0', '0', '0'), element=VV.ufl_element())
+t = Expression(('0', '0', '0.001'), element=VV.ufl_element())
+bc_bottom = DirichletBC(VV, b, bottom)
+
+bc_top = DirichletBC(VV, t, bottom)
+bcs = [bc_bottom]
 
 # functions
 v = TrialFunction(VV)
@@ -102,52 +126,58 @@ I3 = det(C)
 
 # model parameters and material properties
 eta1_0 = 141
-eta1_1 = 141 * 2
-eta1_2 = 141 * 3
+eta1_1 = 141
+eta1_2 = 141
 
 eta2 = 160
 eta3 = 3100
 
 delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
-delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
-delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
+delta_1 = 2 * eta1_1 + 4 * eta2 + 2 * eta3
+delta_2 = 2 * eta1_2 + 4 * eta2 + 2 * eta3
 
 e1 = 0.005
 e2 = 10
 k1 = 100000
 k2 = 0.04
 
-materials = [(eta1_0), (eta1_1), (eta1_2)]
-
-exit()
 
 # strain energy functionals
-psi_MR = eta1 * I1 + eta2 * I2 + eta3 * I3 - delta * ln(sqrt(I3))
+psi_MR_0 = eta1_0 * I1 + eta2 * I2 + eta3 * I3 - delta_0 * ln(sqrt(I3))
+psi_MR_1 = eta1_1 * I1 + eta2 * I2 + eta3 * I3 - delta_1 * ln(sqrt(I3))
+psi_MR_2 = eta1_2 * I1 + eta2 * I2 + eta3 * I3 - delta_2 * ln(sqrt(I3))
+
 psi_P = e1 * (pow(I3, e2) + pow(I3, -e2) - 2)
 psi_ti_1 = k1 * \
     (exp(k2 * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2 / 2
 psi_ti_2 = k1 * \
     (exp(k2 * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2 / 2
-psi = psi_MR + psi_P + psi_ti_1 + psi_ti_2
+
+psi_0 = psi_MR_0 + psi_P + psi_ti_1 + psi_ti_2
+psi_1 = psi_MR_1 + psi_P + psi_ti_1 + psi_ti_2
+psi_2 = psi_MR_2 + psi_P + psi_ti_1 + psi_ti_2
 
 # pressure
 P = Constant(0.1)
 
 # define variational problem
-Pi = psi * dx - dot(-P * n, u) * ds(1)
+Pi = psi_0 * dx(0) + psi_1 * dx(1) + psi_2 * dx(2) - dot(-P * n, u) * ds(1)
 dPi = derivative(Pi, u, w)
 J = derivative(dPi, u, v)
-null_space = build_nullspace(VV)
+# null_space = build_nullspace(VV)
 
 # solve variational problem
-problem = ProblemWithNullSpace(J, dPi, [], null_space)
-solver = SolverWithNullSpace()
+problem = CustomProblem(J, dPi, bcs)
+solver = CustomSolver()
 solver.solve(problem, u.vector())
+# problem = ProblemWithNullSpace(J, dPi, bcs, null_space)
+# solver = SolverWithNullSpace()
+# solver.solve(problem, u.vector())
 
 # write solution
 file = File(output_dir + "displacements.pvd")
 file << u
-PK2 = 2.0 * diff(psi, C)
-PK2Project = project(PK2, VVV)
-file = XDMFFile(output_dir + "PK2.xdmf")
-file.write(PK2Project, 0)
+# PK2 = 2.0 * diff(psi, C)
+# PK2Project = project(PK2, VVV)
+# file = XDMFFile(output_dir + "PK2.xdmf")
+# file.write(PK2Project, 0)
