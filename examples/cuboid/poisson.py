@@ -2,14 +2,12 @@
 from dolfin import *
 from mshr import *
 import math
-import time
 
 # my imports
 from problems import ProblemWithNullSpace
 from solvers import SolverWithNullSpace
 from utils import my_cross
 from utils import build_nullspace
-from utils import XDMF2PVD
 
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
@@ -24,12 +22,16 @@ output_dir = "./output/"
 mesh_dir = "./mesh/"
 
 # mesh
-mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
-                    "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
+mesh = Mesh(mesh_dir + "mesh.xml")
 n = FacetNormal(mesh)
 
 # mark boundaries
-ds = Measure('ds', domain=mesh, subdomain_data=mf)
+boundaries = MeshFunction('size_t', mesh, mesh.topology().dim() - 1)
+boundaries.set_all(0)
+boundary_inner = CompiledSubDomain(
+    "near(sqrt(x[0]*x[0]+x[1]*x[1]), side, 0.1) && on_boundary", side=1.0)
+boundary_inner.mark(boundaries, 1)
+ds = Measure('ds', domain=mesh, subdomain_data=boundaries)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
@@ -99,7 +101,7 @@ psi_ti_2 = k1 * \
 psi = psi_MR + psi_P + psi_ti_1 + psi_ti_2
 
 # pressure
-P = Constant(10)
+P = Constant(0.1)
 
 # define variational problem
 Pi = psi * dx - dot(-P * n, u) * ds(1)
@@ -108,16 +110,9 @@ J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
 
 # solve variational problem
-comm = MPI.comm_world
-rank = comm.Get_rank()
-if rank == 0:
-    start_time = time.time()
 problem = ProblemWithNullSpace(J, dPi, [], null_space)
 solver = SolverWithNullSpace()
 solver.solve(problem, u.vector())
-if rank == 0:
-    end_time = time.time()
-    print("solved using {0} seconds".format(end_time - start_time))
 
 # write solution
 file = File(output_dir + "displacements.pvd")
