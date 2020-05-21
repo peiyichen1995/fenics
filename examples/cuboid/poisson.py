@@ -108,6 +108,8 @@ e3 = sqrt(inner(e3, e3))
 
 # defin tissue orientation on the spatial varying basis
 theta = math.pi / 6
+# a1 = math.cos(theta) * e3 + math.sin(theta) * e2
+# a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
@@ -136,10 +138,11 @@ delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
 delta_1 = 2 * eta1_1 + 4 * eta2 + 2 * eta3
 delta_2 = 2 * eta1_2 + 4 * eta2 + 2 * eta3
 
-e1 = 0.005
-e2 = 10
-k1 = 100000
-k2 = 0.04
+e1 = 0.1
+e2 = 1
+
+k1 = 6.85
+k2 = 754.01
 
 
 # strain energy functionals

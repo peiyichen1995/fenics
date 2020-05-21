@@ -1,12 +1,20 @@
 from dolfin import *
 import math
 import ufl
-import numpy
+
+# my imports
+from problems import ProblemWithNullSpace
+from solvers import SolverWithNullSpace
+from utils import my_cross
+from utils import build_nullspace
+from problems import CustomProblem
+from solvers import CustomSolver
 
 ufl.algorithms.apply_derivatives.CONDITIONAL_WORKAROUND = True
 
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
+parameters["form_compiler"]["quadrature_degree"] = 2
 ffc_options = {"optimize": True,
                "eliminate_zeros": True,
                "precompute_basis_const": True,
@@ -19,7 +27,11 @@ mesh_dir = "./mesh/"
 # Create mesh and define function space
 mesh = Mesh(mesh_dir + "mesh.xml")
 n = FacetNormal(mesh)
-V = VectorFunctionSpace(mesh, "Lagrange", 1)
+
+# function space
+V = FunctionSpace(mesh, 'CG', 2)
+VV = VectorFunctionSpace(mesh, 'CG', 2)
+VVV = TensorFunctionSpace(mesh, 'DG', 1)
 
 # mark boundaries
 boundaries = MeshFunction('size_t', mesh, mesh.topology().dim() - 1)
@@ -29,58 +41,96 @@ boundary_inner = CompiledSubDomain(
 boundary_inner.mark(boundaries, 1)
 ds = Measure('ds', domain=mesh, subdomain_data=boundaries)
 
+# Define domain of three different layers
+eps = DOLFIN_EPS
+domain0 = AutoSubDomain(lambda x: x[2] < 0.2 + eps)
+domain1 = AutoSubDomain(lambda x: x[2] > 0.2 - eps and x[2] < 0.7 + eps)
+domain2 = AutoSubDomain(lambda x: x[2] > 0.7 - eps)
+
+# Have one function with tags of domains
+domains = MeshFunction('size_t', mesh, mesh.topology().dim())
+domains.set_all(0)
+domain0.mark(domains, 0)
+domain1.mark(domains, 1)
+domain2.mark(domains, 2)
+
+# mark domains
+dx = Measure('dx', domain=mesh, subdomain_data=domains)
+
+# Save sub domains to VTK files
+file = File(mesh_dir + "subdomains.pvd")
+file << domains
+
+
 # Mark boundary subdomians
 bottom = CompiledSubDomain("near(x[2], side) && on_boundary", side=0.0)
 top = CompiledSubDomain("near(x[2], side) && on_boundary", side=1.0)
 
 # Define Dirichlet boundary (x = 0 or x = 1)
-t = Expression(('0', '0', '0.01'), element=V.ufl_element())
-b = Expression(('0', '0', '0'), element=V.ufl_element())
+t = Expression(('0', '0', '0.01'), element=VV.ufl_element())
+b = Expression(('0', '0', '0'), element=VV.ufl_element())
 
-bc_t = DirichletBC(V, t, top)
-bc_b = DirichletBC(V, b, bottom)
+bc_t = DirichletBC(VV, t, top)
+bc_b = DirichletBC(VV, b, bottom)
 bcs = [bc_t, bc_b]
 
 # Define functions
-du = TrialFunction(V)            # Incremental displacement
-v = TestFunction(V)             # Test function
-u = Function(V)                 # Displacement from previous iteration
+v = TrialFunction(VV)            # Incremental displacement
+w = TestFunction(VV)             # Test function
+u = Function(VV)                 # Displacement from previous iteration
+phi1 = Function(V)
+phi2 = Function(V)
+
+# read in laplace solutions
+phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
+phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "r")
+phi1_h5.read(phi1, "phi1")
+phi2_h5.read(phi2, "phi2")
+phi1_h5.close()
+phi2_h5.close()
+
+# define orthorgonal basis
+e3 = grad(phi1)
+e1 = grad(phi2)
+e2 = my_cross(e3, e1)
+
+# normalize basis
+e1 = e1 / sqrt(inner(e1, e1))
+e2 = e2 / sqrt(inner(e2, e2))
+e3 = e3 / sqrt(inner(e3, e3))
+
+# define tissue orientation on the spatial varying basis
+theta = math.pi / 6
+a1 = math.cos(theta) * e3 + math.sin(theta) * e2
+a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
 # Kinematics
 d = u.geometric_dimension()
 I = Identity(d)             # Identity tensor
-F = I + grad(u)             # Deformation gradient
-C = F.T * F                   # Right Cauchy-Green tensor
-A_1 = as_vector([cos(pi / 12), -sin(pi / 12), 0])
-#A_2 = as_vector([cos(pi/12),sin(pi/12),0])
-#M_1 = numpy.outer(A_1, A_1)
-#M_2 = numpy.outer(A_2, A_2)
-#J4_1 = numpy.trace(C*M_1)
-#J4_2 = numpy.trace(C*M_2)
-M_1 = outer(A_1, A_1)
-#M_2 = outer(A_2, A_2)
-J4_1 = tr(C * M_1)
-#J4_2 = tr(C*M_2)
-
-# Invariants of deformation tensors
-# Ic = tr(C)
-# J  = det(F)
+F = I + grad(u)
+C = variable(F.T * F)
+M1 = outer(a1, a1)
+M2 = outer(a2, a2)
+J4_1 = tr(C * M1)
+J4_2 = tr(C * M2)
 I1 = tr(C)
 I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
 I3 = det(C)
-#J4_1 = tr(C*M_1)
-#J4_2 = tr(C*M_2)
 
-# Elasticity parameters
-# E, nu = 10.0, 0.3
-# mu, lmbda = Constant(E/(2*(1 + nu))), Constant(E*nu/((1 + nu)*(1 - 2*nu)))
-eta1 = 141
+# model parameters and material properties
+eta1_0 = 141
+eta1_1 = 141
+eta1_2 = 141
+
 eta2 = 160
 eta3 = 3100
-delta = 2 * eta1 + 4 * eta2 + 2 * eta3
 
-e1 = 0.1
-e2 = 1
+delta_0 = 2 * eta1_0 + 4 * eta2 + 2 * eta3
+delta_1 = 2 * eta1_1 + 4 * eta2 + 2 * eta3
+delta_2 = 2 * eta1_2 + 4 * eta2 + 2 * eta3
+
+# e1 = 0.1
+# e2 = 1
 
 k1 = 6.85
 k2 = 754.01
@@ -88,50 +138,39 @@ k2 = 754.01
 # Stored strain energy density (compressible neo-Hookean model)
 # psi = (mu/2)*(Ic - 3) - mu*ln(J) + (lmbda/2)*(ln(J))**2
 # compressible Mooney-Rivlin model
-psi_MR = eta1 * I1 + eta2 * I2 + eta3 * I3 - delta * ln(sqrt(I3))
-psi_P = e1 * (pow(I3, e2) + pow(I3, -e2) - 2)
-#psi_ti_1 = k1*(exp(k2*conditional(gt(J4_1,1),J4_1-1,0))-1)/k2/2
-psi_ti_1 = k1 / 2 / k2 * (exp(pow(conditional(gt(J4_1, 1), conditional(
-    gt(J4_1, 2), J4_1 - 1, 2 * pow(J4_1 - 1, 2) - pow(J4_1 - 1, 3)), 0), 2) * k2) - 1)
-psi_ti_2 = k1 * \
-    (exp(k2 * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2 / 2
+# psi_MR = eta1 * I1 + eta2 * I2 + eta3 * I3 - delta * ln(sqrt(I3))
+psi_MR_0 = eta1_0 * I1 + eta2 * I2 + eta3 * I3 - delta_0 * ln(sqrt(I3))
+psi_MR_1 = eta1_1 * I1 + eta2 * I2 + eta3 * I3 - delta_1 * ln(sqrt(I3))
+psi_MR_2 = eta1_2 * I1 + eta2 * I2 + eta3 * I3 - delta_2 * ln(sqrt(I3))
 
-psi = psi_MR + psi_P + psi_ti_1
+# psi_P = e1 * (pow(I3, e2) + pow(I3, -e2) - 2)
+psi_ti_1 = k1 * \
+    (exp(k2 * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2 / 2
+psi_ti_2 = k1 * \
+    (exp(k2 * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2 / 2
+
+# psi = psi_MR + psi_ti_1
+psi_0 = psi_MR_0 + psi_ti_1 + psi_ti_2
+psi_1 = psi_MR_1 + psi_ti_1 + psi_ti_2
+psi_2 = psi_MR_2 + psi_ti_1 + psi_ti_2
 
 # pressure
 P = Constant(0.1)
 
 # Total potential energy
-Pi = psi * dx - dot(-P * n, u) * ds(1)
+# Pi = psi * dx  # - dot(-P * n, u) * ds(1)
+Pi = psi_0 * dx(0) + psi_1 * dx(1) + psi_2 * dx(2) - dot(-P * n, u) * ds(1)
 
 # Compute first variation of Pi (directional derivative about u in the direction of v)
-F = derivative(Pi, u, v)
+dPi = derivative(Pi, u, w)
 
 # Compute Jacobian of F
-J = derivative(F, u, du)
+J = derivative(dPi, u, v)
 
-# Solve variational problem
-# solve(F == 0, u, bcs, J=J,
-#      form_compiler_parameters=ffc_options)
+problem = CustomProblem(J, dPi, bcs)
+solver = CustomSolver()
+solver.solve(problem, u.vector())
 
-
-# solve(F == 0, u, bcs,
-#      solver_parameters={'linear_solver': 'gmres',
-#                         'preconditioner': 'ilu'})
-
-problem = NonlinearVariationalProblem(F, u, bcs, J)
-solver = NonlinearVariationalSolver(problem)
-prm = solver.parameters
-prm['newton_solver']['absolute_tolerance'] = 1E-8
-prm['newton_solver']['relative_tolerance'] = 1E-7
-prm['newton_solver']['maximum_iterations'] = 1000
-prm['newton_solver']['relaxation_parameter'] = 1.0
-solver.solve()
-
-
-# solve(F == 0, u, bcs=bcs, J=J,
-#      form_compiler_parameters={"optimize": True})
-
-# Save solution in VTK format
-file = File("displacement.pvd")
+# write solution
+file = File(output_dir + "displacements.pvd")
 file << u
