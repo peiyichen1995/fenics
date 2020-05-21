@@ -72,9 +72,9 @@ e1 = grad(phi2)
 e2 = my_cross(e3, e1)
 
 # normalize basis
-e1 = sqrt(inner(e1, e1))
-e2 = sqrt(inner(e2, e2))
-e3 = sqrt(inner(e3, e3))
+e1 = e1 / sqrt(inner(e1, e1))
+e2 = e2 / sqrt(inner(e2, e2))
+e3 = e3 / sqrt(inner(e3, e3))
 
 # defin tissue orientation on the spatial varying basis
 theta = math.pi / 6
