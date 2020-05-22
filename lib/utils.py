@@ -53,46 +53,6 @@ def MSH2XDMF(MSH_name, XDMF_mesh_name, XDMF_mesh_face_name):
     meshio.write(XDMF_mesh_face_name, triangle_mesh)
 
 
-def EXODUS2XDMF(EXODUS_name, XDMF_mesh_name, XDMF_mesh_face_name):
-    msh = meshio.read(EXODUS_name)
-
-    print("msh")
-    print(msh)
-
-    print("cell_sets")
-    print(msh.cell_sets)
-
-    print("point_sets")
-    print(msh.point_sets)
-
-    print("cell_data")
-    print(msh.cell_data)
-
-    print("printing cell.type")
-    for cell in msh.cells:
-        print(cell.type)
-        if cell.type == "triangle":
-            triangle_cells = cell.data
-        elif cell.type == "tetra":
-            tetra_cells = cell.data
-    print("key")
-    print(msh.cell_data_dict)
-
-    for key in msh.cell_data_dict["gmsh:physical"].keys():
-        if key == "triangle":
-            triangle_data = msh.cell_data_dict["gmsh:physical"][key]
-        elif key == "tetra":
-            tetra_data = msh.cell_data_dict["gmsh:physical"][key]
-
-    tetra_mesh = meshio.Mesh(points=msh.points, cells={"tetra": tetra_cells})
-    triangle_mesh = meshio.Mesh(points=msh.points,
-                                cells=[("triangle", triangle_cells)],
-                                cell_data={"face_id": [triangle_data]})
-
-    meshio.write(XDMF_mesh_name, tetra_mesh)
-    meshio.write(XDMF_mesh_face_name, triangle_mesh)
-
-
 def XDMF2PVD(XDMF_mesh_name, XDMF_mesh_face_name, PVD_mesh_name, PVD_mesh_face_name):
     mesh = Mesh()
     with XDMFFile(XDMF_mesh_name) as infile:
@@ -107,6 +67,14 @@ def XDMF2PVD(XDMF_mesh_name, XDMF_mesh_face_name, PVD_mesh_name, PVD_mesh_face_n
 
     return mesh, mf
 
+
+def shortest_dis(points, point):
+    distance = point.distance(points[0])
+    for i in range(len(points)):
+        temp = point.distance(points[i])
+        if(temp < distance):
+            distance = temp
+    return distance
 
 # exponential covariance function
 
