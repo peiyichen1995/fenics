@@ -68,13 +68,15 @@ def XDMF2PVD(XDMF_mesh_name, XDMF_mesh_face_name, PVD_mesh_name, PVD_mesh_face_n
     return mesh, mf
 
 
-def shortest_dis(points, point):
+def shortest_dis(radius, points, point, threshold1, threshold2):
     distance = point.distance(points[0])
+    id = 0
     for i in range(len(points)):
         temp = point.distance(points[i])
         if(temp < distance):
             distance = temp
-    return distance
+            id = i
+    return (radius[id] * (1 + threshold1)) < distance < (radius[id] * (1 + threshold2))
 
 # exponential covariance function
 
