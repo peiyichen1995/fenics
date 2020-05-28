@@ -31,9 +31,10 @@ centerline_dir = "./centerline/"
 mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
                     "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
 
+
 ds = Measure('ds', domain=mesh, subdomain_data=mf)
 
-data = np.loadtxt(centerline_dir + "centerline.csv")
+data = np.loadtxt(centerline_dir + "center.csv")
 r, x, y, z = data[:, 0], data[:, 1], data[:, 2], data[:, 3]
 
 p0 = Point(x[0], y[0], z[0])
@@ -73,14 +74,9 @@ print("choupanghu")
 print(d)
 
 
-def shortest_dis(points, point, threshold1, threshold2, mesh, mf):
-    bmesh = BoundaryMesh(mesh, 'exterior')
-    cell_f = MeshFunction('size_t', bmesh, bmesh.topology().dim() - 1)
-    bmesh_sub = SubMesh(bmesh, mf, 1)
-    tree = bmesh_sub.bounding_box_tree()
+def shortest_dis(points, point, threshold1, threshold2, tree):
 
     distance = point.distance(points[0])
-    id = 0
     _, thick = tree.compute_closest_entity(point)
 
     for i in range(len(points)):
@@ -88,18 +84,21 @@ def shortest_dis(points, point, threshold1, threshold2, mesh, mf):
         if(temp < distance):
             distance = temp
 
+    print("Data")
+    print(thick)
+    print(distance)
     return threshold1 < thick / distance < threshold2
 
 
 # Define domain of three different layers
 eps = DOLFIN_EPS
-eps = 0.05
+eps = 0.00
 domain0 = AutoSubDomain(lambda x: shortest_dis(
-    points, Point(x[0], x[1], x[2]), 0.0 - eps, 0.2 + eps, mesh, mf))
+    points, Point(x[0], x[1], x[2]), 0.0 - eps, 0.05 + eps, tree))
 domain1 = AutoSubDomain(lambda x: shortest_dis(
-    points, Point(x[0], x[1], x[2]), 0.2 - eps, 0.4 + eps, mesh, mf))
+    points, Point(x[0], x[1], x[2]), 0.05 - eps, 0.3 + eps, tree))
 domain2 = AutoSubDomain(lambda x: shortest_dis(
-    points, Point(x[0], x[1], x[2]), 0.4 - eps, 100, mesh, mf))
+    points, Point(x[0], x[1], x[2]), 0.3 - eps, 100, tree))
 
 # Have one function with tags of domains
 domains = MeshFunction('size_t', mesh, mesh.topology().dim())

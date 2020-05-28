@@ -1,0 +1,4 @@
+/tmp/tmp_yi0djug/dolfin_subdomain_e68a1544b63fe998e13b2cbda58a8310.cpp: In member function ‘virtual bool dolfin::dolfin_subdomain_e68a1544b63fe998e13b2cbda58a8310::inside(Eigen::Ref<const Eigen::Matrix<double, -1, 1> >, bool) const’:
+/tmp/tmp_yi0djug/dolfin_subdomain_e68a1544b63fe998e13b2cbda58a8310.cpp:63:17: error: ‘shortest_dis’ was not declared in this scope
+          return shortest_dis(x[0]) && on_boundary;
+                 ^~~~~~~~~~~~

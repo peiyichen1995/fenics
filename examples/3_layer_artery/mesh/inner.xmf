@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf xmlns:xi="http://www.w3.org/2003/XInclude" Version="2.2">
+  <Domain>
+    <Grid GridType="Tree">
+      <Topology TopologyType="NOTOPOLOGY" Dimensions="1"/>
+      <Geometry GeometryType="NONE"/>
+      <Time TimeType="Single" Value="0"/>
+      <Grid GridType="Uniform">
+        <Topology TopologyType="Triangle" Dimensions="16546">
+          <DataItem Dimensions="16546 3" NumberType="Int" Precision="8" Format="HDF">inner.h5:/Block_0_t000000/Topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="8352 3" NumberType="Float" Precision="8" Format="HDF">inner.h5:/Block_0_t000000/Geometry/Points</DataItem>
+        </Geometry>
+        <Attribute Name="face_id" Active="1" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="16546" NumberType="Int" Precision="4" Format="HDF">inner.h5:/Block_0_t000000/Cell/face_id</DataItem>
+        </Attribute>
+        <Attribute Name="vtkOriginalCellIds" Active="1" AttributeType="None" Center="Cell">
+          <DataItem Dimensions="16546" NumberType="Int" Precision="8" Format="HDF">inner.h5:/Block_0_t000000/Cell/vtkOriginalCellIds</DataItem>
+        </Attribute>
+        <Attribute Name="cellNormals" Active="1" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="16546 3" NumberType="Float" Precision="4" Format="HDF">inner.h5:/Block_0_t000000/Cell/cellNormals</DataItem>
+        </Attribute>
+        <Attribute Name="vtkOriginalPointIds" Active="1" AttributeType="None" Center="Node">
+          <DataItem Dimensions="8352" NumberType="Int" Precision="8" Format="HDF">inner.h5:/Block_0_t000000/Node/vtkOriginalPointIds</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>
