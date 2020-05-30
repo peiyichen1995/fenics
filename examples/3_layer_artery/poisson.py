@@ -177,7 +177,7 @@ psi_media = psi_NH_media + psi_P_media + psi_ti_1_media + psi_ti_2_media
 psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
     psi_ti_1_adventitia + psi_ti_2_adventitia
 # pressure
-P = Constant(10)
+P = Constant(24)
 
 # define variational problem
 Pi = psi_media * dx(2) + psi_adventitia * dx(3) + \
