@@ -82,6 +82,40 @@ theta = math.pi / 6
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
+# define domains
+
+
+def define_domain(phi, point, threshold1, threshold2):
+    value = phi(point)
+
+    return threshold1 < value < threshold2
+
+
+# Define domain of three different layers
+eps = DOLFIN_EPS
+eps = 0.04
+domain0 = AutoSubDomain(lambda x: define_domain(
+    phi2, Point(x[0], x[1], x[2]), 0.0 - eps, 1 / 4 + eps))
+domain1 = AutoSubDomain(lambda x: define_domain(
+    phi2, Point(x[0], x[1], x[2]), 1 / 4 - eps, 2 / 3 + eps))
+domain2 = AutoSubDomain(lambda x: define_domain(
+    phi2, Point(x[0], x[1], x[2]), 2 / 3 - eps, 2 + eps))
+
+# Have one function with tags of domains
+domains = MeshFunction('size_t', mesh, mesh.topology().dim())
+domains.set_all(2)
+
+domain0.mark(domains, 1)
+domain1.mark(domains, 2)
+domain2.mark(domains, 3)
+# mark domains
+dx = Measure('dx', domain=mesh, subdomain_data=domains)
+
+# Save sub domains to VTK files
+file = File(mesh_dir + "subdomains.pvd")
+file << domains
+
+
 # Kinematics
 d = u.geometric_dimension()
 I = Identity(d)
@@ -96,29 +130,56 @@ I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
 I3 = det(C)
 
 # model parameters and material properties
-eta1 = 141
-eta2 = 160
-eta3 = 3100
+c1_media = 9.23
+c1_adventitia = 7.17
+
+eta1 = 80
+eta2 = 250
+eta3 = 2000
 delta = 2 * eta1 + 4 * eta2 + 2 * eta3
-e1 = 0.005
-e2 = 10
-k1 = 100000
-k2 = 0.04
+
+e1_media = 360
+e2_media = 9
+e1_adventitia = 70
+e2_adventitia = 8.5
+
+k1_media = 192.86
+k2_media = 2626.84
+k1_adventitia = 0.00368
+k2_adventitia = 51.15
 
 # strain energy functionals
 psi_MR = eta1 * I1 + eta2 * I2 + eta3 * I3 - delta * ln(sqrt(I3))
-psi_P = e1 * (pow(I3, e2) + pow(I3, -e2) - 2)
-psi_ti_1 = k1 * \
-    (exp(k2 * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2 / 2
-psi_ti_2 = k1 * \
-    (exp(k2 * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2 / 2
-psi = psi_MR + psi_P + psi_ti_1 + psi_ti_2
 
+psi_NH_media = c1_media * (I1 / pow(I3, 1 / 3) - 3)
+psi_NH_adventitia = c1_adventitia * (I1 / pow(I3, 1 / 3) - 3)
+
+psi_P_media = e1_media * (pow(I3, e2_media) + pow(I3, -e2_media) - 2)
+psi_P_adventitia = e1_adventitia * \
+    (pow(I3, e2_adventitia) + pow(I3, -e2_adventitia) - 2)
+
+psi_ti_1_media = k1_media * \
+    (exp(k2_media * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2_media / 2
+psi_ti_2_media = k1_media * \
+    (exp(k2_media * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2_media / 2
+psi_ti_1_adventitia = k1_adventitia * \
+    (exp(k2_adventitia * conditional(gt(J4_1, 1),
+                                     pow((J4_1 - 1), 2), 0)) - 1) / k2_adventitia / 2
+psi_ti_2_adventitia = k1_adventitia * \
+    (exp(k2_adventitia * conditional(gt(J4_2, 1),
+                                     pow((J4_2 - 1), 2), 0)) - 1) / k2_adventitia / 2
+
+
+psi_media = psi_NH_media + psi_P_media + psi_ti_1_media + psi_ti_2_media
+
+psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
+    psi_ti_1_adventitia + psi_ti_2_adventitia
 # pressure
 P = Constant(10)
 
 # define variational problem
-Pi = psi * dx - dot(-P * n, u) * ds(1)
+Pi = psi_media * dx(2) + psi_adventitia * dx(3) + \
+    psi_MR * dx(1) - dot(-P * n, u) * ds(1)
 dPi = derivative(Pi, u, w)
 J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)

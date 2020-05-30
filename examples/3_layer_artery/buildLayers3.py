@@ -12,7 +12,7 @@ import numpy as np
 # my imports
 from problems import CustomProblem
 from solvers import CustomSolver
-from utils import MSH2XDMF, XDMF2PVD  # , shortest_dis
+from utils import MSH2XDMF, XDMF2PVD  # , define_domain
 
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
@@ -45,7 +45,7 @@ phi2_h5.read(phi2, "phi2")
 phi2_h5.close()
 
 
-def shortest_dis(phi, point, threshold1, threshold2):
+def define_domain(phi, point, threshold1, threshold2):
     value = phi(point)
 
     return threshold1 < value < threshold2
@@ -54,11 +54,11 @@ def shortest_dis(phi, point, threshold1, threshold2):
 # Define domain of three different layers
 eps = DOLFIN_EPS
 eps = 0.04
-domain0 = AutoSubDomain(lambda x: shortest_dis(
+domain0 = AutoSubDomain(lambda x: define_domain(
     phi2, Point(x[0], x[1], x[2]), 0.0 - eps, 1 / 4 + eps))
-domain1 = AutoSubDomain(lambda x: shortest_dis(
+domain1 = AutoSubDomain(lambda x: define_domain(
     phi2, Point(x[0], x[1], x[2]), 1 / 4 - eps, 2 / 3 + eps))
-domain2 = AutoSubDomain(lambda x: shortest_dis(
+domain2 = AutoSubDomain(lambda x: define_domain(
     phi2, Point(x[0], x[1], x[2]), 2 / 3 - eps, 2 + eps))
 
 # Have one function with tags of domains
