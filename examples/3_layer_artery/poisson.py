@@ -11,6 +11,22 @@ from utils import my_cross
 from utils import build_nullspace
 from utils import XDMF2PVD
 
+# system imports
+from utils import build_nullspace
+from utils import my_cross
+from solvers import SolverWithNullSpace
+from problems import ProblemWithNullSpace
+import ufl
+import math
+from dolfin import *
+from mshr import *
+import numpy as np
+
+# my imports
+from problems import CustomProblem
+from solvers import CustomSolver
+from utils import MSH2XDMF, XDMF2PVD
+
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
 parameters["form_compiler"]["quadrature_degree"] = 2
