@@ -1,0 +1,127 @@
+Process 0: Computed global bounding box tree with 147 boxes.
+Process 1: Computed global bounding box tree with 147 boxes.
+Process 2: Computed global bounding box tree with 147 boxes.
+Process 3: Computed global bounding box tree with 147 boxes.
+Process 4: Computed global bounding box tree with 147 boxes.
+Process 5: Computed global bounding box tree with 147 boxes.
+Process 6: Computed global bounding box tree with 147 boxes.
+Process 7: Computed global bounding box tree with 147 boxes.
+Process 8: Computed global bounding box tree with 147 boxes.
+Process 9: Computed global bounding box tree with 147 boxes.
+Process 10: Computed global bounding box tree with 147 boxes.
+Process 11: Computed global bounding box tree with 147 boxes.
+Process 12: Computed global bounding box tree with 147 boxes.
+Process 13: Computed global bounding box tree with 147 boxes.
+Process 14: Computed global bounding box tree with 147 boxes.
+Process 15: Computed global bounding box tree with 147 boxes.
+Process 16: Computed global bounding box tree with 147 boxes.
+Process 17: Computed global bounding box tree with 147 boxes.
+Process 18: Computed global bounding box tree with 147 boxes.
+Process 19: Computed global bounding box tree with 147 boxes.
+Process 20: Computed global bounding box tree with 147 boxes.
+Process 21: Computed global bounding box tree with 147 boxes.
+Process 22: Computed global bounding box tree with 147 boxes.
+Process 23: Computed global bounding box tree with 147 boxes.
+Process 24: Computed global bounding box tree with 147 boxes.
+Process 25: Computed global bounding box tree with 147 boxes.
+Process 26: Computed global bounding box tree with 147 boxes.
+Process 27: Computed global bounding box tree with 147 boxes.
+Process 28: Computed global bounding box tree with 147 boxes.
+Process 29: Computed global bounding box tree with 147 boxes.
+Process 30: Computed global bounding box tree with 147 boxes.
+Process 31: Computed global bounding box tree with 147 boxes.
+Process 32: Computed global bounding box tree with 147 boxes.
+Process 33: Computed global bounding box tree with 147 boxes.
+Process 34: Computed global bounding box tree with 147 boxes.
+Process 35: Computed global bounding box tree with 147 boxes.
+Process 36: Computed global bounding box tree with 147 boxes.
+Process 37: Computed global bounding box tree with 147 boxes.
+Process 38: Computed global bounding box tree with 147 boxes.
+Process 39: Computed global bounding box tree with 147 boxes.
+Process 40: Computed global bounding box tree with 147 boxes.
+Process 41: Computed global bounding box tree with 147 boxes.
+Process 42: Computed global bounding box tree with 147 boxes.
+Process 43: Computed global bounding box tree with 147 boxes.
+Process 44: Computed global bounding box tree with 147 boxes.
+Process 45: Computed global bounding box tree with 147 boxes.
+Process 46: Computed global bounding box tree with 147 boxes.
+Process 47: Computed global bounding box tree with 147 boxes.
+Process 48: Computed global bounding box tree with 147 boxes.
+Process 49: Computed global bounding box tree with 147 boxes.
+Process 50: Computed global bounding box tree with 147 boxes.
+Process 51: Computed global bounding box tree with 147 boxes.
+Process 52: Computed global bounding box tree with 147 boxes.
+Process 53: Computed global bounding box tree with 147 boxes.
+Process 54: Computed global bounding box tree with 147 boxes.
+Process 55: Computed global bounding box tree with 147 boxes.
+Process 56: Computed global bounding box tree with 147 boxes.
+Process 57: Computed global bounding box tree with 147 boxes.
+Process 58: Computed global bounding box tree with 147 boxes.
+Process 59: Computed global bounding box tree with 147 boxes.
+Process 60: Computed global bounding box tree with 147 boxes.
+Process 61: Computed global bounding box tree with 147 boxes.
+Process 62: Computed global bounding box tree with 147 boxes.
+Process 63: Computed global bounding box tree with 147 boxes.
+Process 64: Computed global bounding box tree with 147 boxes.
+Process 65: Computed global bounding box tree with 147 boxes.
+Process 66: Computed global bounding box tree with 147 boxes.
+Process 67: Computed global bounding box tree with 147 boxes.
+Process 68: Computed global bounding box tree with 147 boxes.
+Process 69: Computed global bounding box tree with 147 boxes.
+Process 70: Computed global bounding box tree with 147 boxes.
+Process 71: Computed global bounding box tree with 147 boxes.
+Process 72: Computed global bounding box tree with 147 boxes.
+Process 73: Computed global bounding box tree with 147 boxes.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Process 0: Newton iteration 0: r (abs) = 7.181e+00 (tol = 1.000e-10) r (rel) = 1.000e+00 (tol = 1.000e-09)
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+  0 KSP Residual norm 4.156340698778e+01 
+  1 KSP Residual norm 7.669285877908e+00 
+  2 KSP Residual norm 6.048356716701e+00 
+  3 KSP Residual norm 5.493176180515e+00 
+  4 KSP Residual norm 5.171063515292e+00 
+  5 KSP Residual norm 4.955973321787e+00 
+  6 KSP Residual norm 4.860726071918e+00 
+  7 KSP Residual norm 4.852361983452e+00 
+  8 KSP Residual norm 4.839659186964e+00 
+  9 KSP Residual norm 4.797058779001e+00 
+ 10 KSP Residual norm 4.710244180114e+00 
+ 11 KSP Residual norm 4.625893057619e+00 
+ 12 KSP Residual norm 4.524009076867e+00 
+ 13 KSP Residual norm 4.475436714784e+00 
+ 14 KSP Residual norm 4.429760470952e+00 
+ 15 KSP Residual norm 4.424438809129e+00 
+ 16 KSP Residual norm 4.419525444007e+00 
+ 17 KSP Residual norm 4.419102070926e+00 
+ 18 KSP Residual norm 4.418081113118e+00 
+ 19 KSP Residual norm 4.404233309570e+00 
+ 20 KSP Residual norm 4.396899198001e+00 
+ 21 KSP Residual norm 4.371462228348e+00 
+ 22 KSP Residual norm 4.345044832049e+00 
+ 23 KSP Residual norm 4.315873250527e+00 
+ 24 KSP Residual norm 4.281673416986e+00 
+ 25 KSP Residual norm 4.258930978542e+00 
+ 26 KSP Residual norm 4.246045101098e+00 
+ 27 KSP Residual norm 4.233458968430e+00 
+ 28 KSP Residual norm 4.228398106846e+00 
+ 29 KSP Residual norm 4.222478809825e+00 
+ 30 KSP Residual norm 4.221019836637e+00 
+ 31 KSP Residual norm 4.219019414416e+00 
+ 32 KSP Residual norm 4.213494850731e+00 
+ 33 KSP Residual norm 4.203356618189e+00 
+ 34 KSP Residual norm 4.190140627414e+00 
+ 35 KSP Residual norm 4.182334986954e+00 
+ 36 KSP Residual norm 4.177388962816e+00 
+ 37 KSP Residual norm 4.176394119958e+00 
+ 38 KSP Residual norm 4.174024205510e+00 
+ 39 KSP Residual norm 4.171346877365e+00 
+ 40 KSP Residual norm 4.163515731798e+00 
+ 41 KSP Residual norm 4.160246005486e+00 
+ 42 KSP Residual norm 4.157794685103e+00 
+ 43 KSP Residual norm 4.152836079274e+00 
+ 44 KSP Residual norm 4.148089162786e+00 
+ 45 KSP Residual norm 4.142301439845e+00 
+ 46 KSP Residual norm 4.127941063709e+00 
+[mpiexec@jg342-cmp-01.egr.duke.edu] Sending Ctrl-C to processes as requested
+[mpiexec@jg342-cmp-01.egr.duke.edu] Press Ctrl-C again to force abort
+Ctrl-C caught... cleaning up processes
