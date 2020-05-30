@@ -39,6 +39,8 @@ ffc_options = {"optimize": True,
 output_dir = "./output/"
 mesh_dir = "./mesh/"
 
+start_time = time.time()
+
 # mesh
 mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
                     "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
@@ -203,3 +205,10 @@ PK2 = 2.0 * diff(psi, C)
 PK2Project = project(PK2, VVV)
 file = XDMFFile(output_dir + "PK2.xdmf")
 file.write(PK2Project, 0)
+
+print("runnning time")
+print(time.time() - start_time)
+
+file1 = open("myfile.txt", "w")  # write mode
+file1.write(time.time() - start_time)
+file1.close()
