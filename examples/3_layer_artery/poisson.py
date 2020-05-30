@@ -80,7 +80,7 @@ e2 = e2 / sqrt(inner(e2, e2))
 e3 = e3 / sqrt(inner(e3, e3))
 
 # defin tissue orientation on the spatial varying basis
-theta = math.pi / 6
+theta = math.pi / 3
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
