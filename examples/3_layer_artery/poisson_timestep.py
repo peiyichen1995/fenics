@@ -179,7 +179,7 @@ psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
 
 # Set parameter values
 T = 1
-num_steps = 5
+num_steps = 20
 dt = T / num_steps
 
 
