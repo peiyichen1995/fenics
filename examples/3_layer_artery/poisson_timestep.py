@@ -193,7 +193,7 @@ f = Constant((0, 0))
 
 # define variational problem
 Pi = psi_media * dx(2) + psi_adventitia * dx(3) + \
-    psi_MR * dx(1) - dot(-P * n, u) * ds(1)
+    psi_media * dx(1) - dot(-P * n, u) * ds(1)
 dPi = derivative(Pi, u, w)
 J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
