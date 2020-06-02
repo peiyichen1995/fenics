@@ -132,7 +132,7 @@ I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
 I3 = det(C)
 
 # model parameters and material properties
-c1_media = 9.23
+c1_media = 12
 c1_adventitia = 7.17
 
 eta1 = 80
