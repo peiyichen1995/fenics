@@ -12,12 +12,10 @@ class SolverWithNullSpace(NewtonSolver):
 
         PETScOptions.set("ksp_type", "gmres")
         PETScOptions.set("ksp_monitor")
-        PETScOptions.set("ksp_max_it", 1000)
+        PETScOptions.set("ksp_max_it", 10000)
         PETScOptions.set("ksp_gmres_restart", 200)
         PETScOptions.set("pc_type", "asm")
         PETScOptions.set("sub_pc_type", "lu")
-        PETScOptions.set("snes_atol", 1e-8)
-        PETScOptions.set("snes_rtol", 1e-6)
 
         self.linear_solver().set_from_options()
 
@@ -31,7 +29,7 @@ class CustomSolver(NewtonSolver):
         self.linear_solver().set_operator(A)
         PETScOptions.set("ksp_type", "gmres")
         PETScOptions.set("ksp_monitor")
-        PETScOptions.set("ksp_max_it", 1000)
+        PETScOptions.set("ksp_max_it", 10000)
         PETScOptions.set("ksp_gmres_restart", 200)
         PETScOptions.set("pc_type", "asm")
         PETScOptions.set("sub_pc_type", "lu")

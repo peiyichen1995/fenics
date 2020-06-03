@@ -22,7 +22,7 @@ mesh_dir = "./mesh/"
 cylinder_o = Cylinder(Point(0, 0, 0), Point(0, 0, 3), 2, 2)
 cylinder_i = Cylinder(Point(0, 0, 0), Point(0, 0, 3), 1, 1)
 geometry = cylinder_o - cylinder_i
-mesh = generate_mesh(geometry, 30)
+mesh = generate_mesh(geometry, 15)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
