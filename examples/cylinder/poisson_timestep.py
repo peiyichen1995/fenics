@@ -24,6 +24,12 @@ def Tissue(k1, k2, J4):
         (exp(k2 * conditional(gt(J4, 1), pow((J4 - 1), 2), 0)) - 1) / k2 / 2
 
 
+def define_domain(phi, point, threshold1, threshold2):
+    value = phi(point)
+
+    return threshold1 < value < threshold2
+
+
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
 parameters["form_compiler"]["quadrature_degree"] = 2
@@ -80,15 +86,9 @@ e2 = e2 / sqrt(inner(e2, e2))
 e3 = e3 / sqrt(inner(e3, e3))
 
 # defin tissue orientation on the spatial varying basis
-theta = math.pi / 6
+theta = math.pi / 3
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
-
-
-def define_domain(phi, point, threshold1, threshold2):
-    value = phi(point)
-
-    return threshold1 < value < threshold2
 
 
 # Define domain of three different layers
@@ -154,32 +154,32 @@ k1_adventitia = 0.00368
 k2_adventitia = 51.15
 
 # strain energy functionals
-psi_NH_media = c1_media * (I1 / pow(I3, 1 / 3) - 3)
-psi_NH_adventitia = c1_adventitia * (I1 / pow(I3, 1 / 3) - 3)
-
-psi_P_media = e1_media * (pow(I3, e2_media) + pow(I3, -e2_media) - 2)
-psi_P_adventitia = e1_adventitia * \
-    (pow(I3, e2_adventitia) + pow(I3, -e2_adventitia) - 2)
-
-psi_ti_1_media = k1_media * \
-    (exp(k2_media * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2_media / 2
-psi_ti_2_media = k1_media * \
-    (exp(k2_media * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2_media / 2
-psi_ti_1_adventitia = k1_adventitia * \
-    (exp(k2_adventitia * conditional(gt(J4_1, 1),
-                                     pow((J4_1 - 1), 2), 0)) - 1) / k2_adventitia / 2
-psi_ti_2_adventitia = k1_adventitia * \
-    (exp(k2_adventitia * conditional(gt(J4_2, 1),
-                                     pow((J4_2 - 1), 2), 0)) - 1) / k2_adventitia / 2
-
-# psi_NH_media = NeoHookean(c1_media, I1, I3)
-# psi_NH_adventitia = NeoHookean(c1_adventitia, I1, I3)
-# psi_P_media = Penalty(e1_media, e2_media, I3)
-# psi_P_adventitia = Penalty(e1_adventitia, e2_adventitia, I3)
-# psi_ti_1_media = Tissue(k1_media, k2_media, J4_1)
-# psi_ti_2_media = Tissue(k1_media, k2_media, J4_2)
-# psi_ti_1_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_1)
-# psi_ti_2_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_2)
+# psi_NH_media = c1_media * (I1 / pow(I3, 1 / 3) - 3)
+# psi_NH_adventitia = c1_adventitia * (I1 / pow(I3, 1 / 3) - 3)
+#
+# psi_P_media = e1_media * (pow(I3, e2_media) + pow(I3, -e2_media) - 2)
+# psi_P_adventitia = e1_adventitia * \
+#     (pow(I3, e2_adventitia) + pow(I3, -e2_adventitia) - 2)
+#
+# psi_ti_1_media = k1_media * \
+#     (exp(k2_media * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2_media / 2
+# psi_ti_2_media = k1_media * \
+#     (exp(k2_media * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2_media / 2
+# psi_ti_1_adventitia = k1_adventitia * \
+#     (exp(k2_adventitia * conditional(gt(J4_1, 1),
+#                                      pow((J4_1 - 1), 2), 0)) - 1) / k2_adventitia / 2
+# psi_ti_2_adventitia = k1_adventitia * \
+#     (exp(k2_adventitia * conditional(gt(J4_2, 1),
+#                                      pow((J4_2 - 1), 2), 0)) - 1) / k2_adventitia / 2
+#
+psi_NH_media = NeoHookean(c1_media, I1, I3)
+psi_NH_adventitia = NeoHookean(c1_adventitia, I1, I3)
+psi_P_media = Penalty(e1_media, e2_media, I3)
+psi_P_adventitia = Penalty(e1_adventitia, e2_adventitia, I3)
+psi_ti_1_media = Tissue(k1_media, k2_media, J4_1)
+psi_ti_2_media = Tissue(k1_media, k2_media, J4_2)
+psi_ti_1_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_1)
+psi_ti_2_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_2)
 #
 psi_media = psi_NH_media + psi_P_media + psi_ti_1_media + psi_ti_2_media
 psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
@@ -205,13 +205,13 @@ num_steps = 10
 dt = T / num_steps
 
 # pressure
-P = Constant(10)
+P = Constant(1)
 # P = Expression("10*t", t=0.0, degree=0)
 
 # define variational problem
 # Pi = psi * dx - dot(-P * n, u) * ds(1)
-Pi = psi_media * dx(2) + psi_adventitia * dx(3) + \
-    psi_media * dx(1) - dot(-P * n, u) * ds(1)
+Pi = psi_media * dx(1) + psi_media * dx(2) + \
+    psi_adventitia * dx(3) - dot(-P * n, u) * ds(1)
 # Pi = psi_media * dx(2) + psi_adventitia * dx(3) + psi_media * dx(1) - psi_media_n * \
 #     dx(2) - psi_adventitia_n * dx(3) - \
 #     psi_media_n * dx(1) - dot(-P * n, u) * ds(1)
