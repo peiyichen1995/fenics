@@ -205,7 +205,7 @@ num_steps = 10
 dt = T / num_steps
 
 # pressure
-P = Constant(17)
+P = Constant(10)
 # P = Expression("10*t", t=0.0, degree=0)
 
 # define variational problem
