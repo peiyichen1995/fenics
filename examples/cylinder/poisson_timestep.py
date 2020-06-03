@@ -5,14 +5,20 @@ import math
 import time
 
 # my imports
-from problems import ProblemWithNullSpace
-from solvers import SolverWithNullSpace
+from problems import ProblemWithNullSpace, CustomProblem
+from solvers import SolverWithNullSpace, CustomSolver
 from utils import my_cross
 from utils import build_nullspace
 
 
-def NeoHookean(c1, I1, I3):
-    return c1 * (I1 / pow(I3, 1 / 3) - 3)
+# def NeoHookean(c1, I1, I3):
+#     return c1 * (I1 / pow(I3, 1 / 3) - 3)
+
+def NeoHookean(c1, F):
+    J = det(F)
+    C = F.T * F
+    C_bar = pow(J, -2 / 3) * C
+    return c1 * (tr(C_bar) - 3)
 
 
 def Penalty(e1, e2, I3):
@@ -130,21 +136,12 @@ I1 = tr(C)
 I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
 I3 = det(C)
 
-# previous deformation
-F_n = I + grad(u_n)
-C_n = F_n.T * F_n
-J4_1_n = tr(C_n * M1)
-J4_2_n = tr(C_n * M2)
-I1_n = tr(C_n)
-I2_n = 1 / 2 * (tr(C_n) * tr(C_n) - tr(C_n * C_n))
-I3_n = det(C_n)
-
 # model parameters and material properties
-c1_media = 12
+c1_media = 9.23
 c1_adventitia = 10
 
-e1_media = 360
-e2_media = 9
+e1_media = 36
+e2_media = 5
 e1_adventitia = 70
 e2_adventitia = 8.5
 
@@ -172,61 +169,39 @@ k2_adventitia = 51.15
 #     (exp(k2_adventitia * conditional(gt(J4_2, 1),
 #                                      pow((J4_2 - 1), 2), 0)) - 1) / k2_adventitia / 2
 #
-psi_NH_media = NeoHookean(c1_media, I1, I3)
-psi_NH_adventitia = NeoHookean(c1_adventitia, I1, I3)
+psi_NH_media = NeoHookean(c1_media, F)
+psi_NH_adventitia = NeoHookean(c1_adventitia, F)
 psi_P_media = Penalty(e1_media, e2_media, I3)
 psi_P_adventitia = Penalty(e1_adventitia, e2_adventitia, I3)
 psi_ti_1_media = Tissue(k1_media, k2_media, J4_1)
 psi_ti_2_media = Tissue(k1_media, k2_media, J4_2)
 psi_ti_1_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_1)
 psi_ti_2_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_2)
-#
+
 psi_media = psi_NH_media + psi_P_media + psi_ti_1_media + psi_ti_2_media
 psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
     psi_ti_1_adventitia + psi_ti_2_adventitia
-#
-psi_NH_media_n = NeoHookean(c1_media, I1_n, I3_n)
-psi_NH_adventitia_n = NeoHookean(c1_adventitia, I1_n, I3_n)
-psi_P_media_n = Penalty(e1_media, e2_media, I3_n)
-psi_P_adventitia_n = Penalty(e1_adventitia, e2_adventitia, I3_n)
-psi_ti_1_media_n = Tissue(k1_media, k2_media, J4_1_n)
-psi_ti_2_media_n = Tissue(k1_media, k2_media, J4_2_n)
-psi_ti_1_adventitia_n = Tissue(k1_adventitia, k2_adventitia, J4_1_n)
-psi_ti_2_adventitia_n = Tissue(k1_adventitia, k2_adventitia, J4_2_n)
 
-psi_media_n = psi_NH_media_n + psi_P_media_n + \
-    psi_ti_1_media_n + psi_ti_2_media_n
-psi_adventitia_n = psi_NH_adventitia_n + psi_P_adventitia_n + \
-    psi_ti_1_adventitia_n + psi_ti_2_adventitia_n
-
-# Set parameter values
-T = 1
-num_steps = 1
-dt = T / num_steps
 
 # pressure
 # P = Constant(1)
-P = Expression("2*t", t=0.0, degree=0)
+P = Expression("t", t=0.0, degree=0)
 
-# define variational problem
-# Pi = psi * dx - dot(-P * n, u) * ds(1)
-# Pi = psi_media * dx(1) + psi_media * dx(2) + \
-#     psi_adventitia * dx(3) - dot(-P * n, u) * ds(1)
-# Pi = psi_media * dx(1) + psi_media * dx(2) + psi_adventitia * dx(3) - psi_media_n * \
-#     dx(1) - psi_media_n * dx(2) - psi_adventitia_n * \
-#     dx(3) - dot(-P * n, u) * ds(1)
-Pi = psi_media * dx - psi_media_n * dx - dot(-P * n, u) * ds(1)
+Pi = psi_media * dx(1) + psi_media * dx(2) + psi_adventitia * \
+    dx(3) - dot(-P * n, u) * ds(1)
 dPi = derivative(Pi, u, w)
 J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
+
 
 # solve variational problem
 problem = ProblemWithNullSpace(J, dPi, [], null_space)
 solver = SolverWithNullSpace()
 
-
 start_time = time.time()
-solver.solve(problem, u.vector())
+T = 17
+num_steps = 17
+dt = T / num_steps
 t = 0
 for n in range(num_steps):
     t += dt
@@ -237,8 +212,6 @@ for n in range(num_steps):
     # write solution
     file = File(output_dir + "displacements_step_" + str(n) + ".pvd")
     file << u
-
-    u_n.assign(u)
 
 
 # PK2 = 2.0 * diff(psi, C)

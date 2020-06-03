@@ -19,10 +19,10 @@ output_dir = "./output/"
 mesh_dir = "./mesh/"
 
 # mesh
-cylinder_o = Cylinder(Point(0, 0, 0), Point(0, 0, 3), 2, 2)
-cylinder_i = Cylinder(Point(0, 0, 0), Point(0, 0, 3), 1, 1)
+cylinder_o = Cylinder(Point(0, 0, 0), Point(0, 0, 1), 2, 2)
+cylinder_i = Cylinder(Point(0, 0, 0), Point(0, 0, 1), 1, 1)
 geometry = cylinder_o - cylinder_i
-mesh = generate_mesh(geometry, 15)
+mesh = generate_mesh(geometry, 20)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)

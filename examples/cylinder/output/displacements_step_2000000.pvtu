@@ -16,5 +16,9 @@
     <Piece Source="displacements_step_2_p1_000000.vtu" />
     <Piece Source="displacements_step_2_p2_000000.vtu" />
     <Piece Source="displacements_step_2_p3_000000.vtu" />
+    <Piece Source="displacements_step_2_p4_000000.vtu" />
+    <Piece Source="displacements_step_2_p5_000000.vtu" />
+    <Piece Source="displacements_step_2_p6_000000.vtu" />
+    <Piece Source="displacements_step_2_p7_000000.vtu" />
   </PUnstructuredGrid>
 </VTKFile>

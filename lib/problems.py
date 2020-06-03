@@ -39,4 +39,3 @@ class ProblemWithNullSpace(NonlinearProblem):
         assemble(self.bilinear_form, tensor=A)
         for bc in self.bcs:
             bc.apply(A)
-        as_backend_type(A).set_nullspace(self.null_space)

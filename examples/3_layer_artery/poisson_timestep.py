@@ -27,6 +27,29 @@ from problems import CustomProblem
 from solvers import CustomSolver
 from utils import MSH2XDMF, XDMF2PVD
 
+
+def NeoHookean(c1, F):
+    J = det(F)
+    C = F.T * F
+    C_bar = pow(J, -2 / 3) * C
+    return c1 * (tr(C_bar) - 3)
+
+
+def Penalty(e1, e2, I3):
+    return e1 * (pow(I3, e2) + pow(I3, -e2) - 2)
+
+
+def Tissue(k1, k2, J4):
+    return k1 * \
+        (exp(k2 * conditional(gt(J4, 1), pow((J4 - 1), 2), 0)) - 1) / k2 / 2
+
+
+def define_domain(phi, point, threshold1, threshold2):
+    value = phi(point)
+
+    return threshold1 < value < threshold2
+
+
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
 parameters["form_compiler"]["quadrature_degree"] = 2
@@ -84,22 +107,14 @@ theta = math.pi / 3
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
-# define domains
-
-
-def define_domain(phi, point, threshold1, threshold2):
-    value = phi(point)
-
-    return threshold1 < value < threshold2
-
 
 # Define domain of three different layers
 eps = DOLFIN_EPS
 eps = 0.04
 domain0 = AutoSubDomain(lambda x: define_domain(
-    phi2, Point(x[0], x[1], x[2]), 0.0 - eps, 1 / 4 + eps))
+    phi2, Point(x[0], x[1], x[2]), 0.0 - eps, 2 / 3 + eps))
 domain1 = AutoSubDomain(lambda x: define_domain(
-    phi2, Point(x[0], x[1], x[2]), 1 / 4 - eps, 2 / 3 + eps))
+    phi2, Point(x[0], x[1], x[2]), 0.0 - eps, 2 / 3 + eps))
 domain2 = AutoSubDomain(lambda x: define_domain(
     phi2, Point(x[0], x[1], x[2]), 2 / 3 - eps, 2 + eps))
 
@@ -132,16 +147,11 @@ I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
 I3 = det(C)
 
 # model parameters and material properties
-c1_media = 12
-c1_adventitia = 7.17
+c1_media = 9.23
+c1_adventitia = 10
 
-eta1 = 80
-eta2 = 250
-eta3 = 2000
-delta = 2 * eta1 + 4 * eta2 + 2 * eta3
-
-e1_media = 360
-e2_media = 9
+e1_media = 36
+e2_media = 5
 e1_adventitia = 70
 e2_adventitia = 8.5
 
@@ -150,78 +160,49 @@ k2_media = 2626.84
 k1_adventitia = 0.00368
 k2_adventitia = 51.15
 
-# strain energy functionals
-psi_MR = eta1 * I1 + eta2 * I2 + eta3 * I3 - delta * ln(sqrt(I3))
-
-psi_NH_media = c1_media * (I1 / pow(I3, 1 / 3) - 3)
-psi_NH_adventitia = c1_adventitia * (I1 / pow(I3, 1 / 3) - 3)
-
-psi_P_media = e1_media * (pow(I3, e2_media) + pow(I3, -e2_media) - 2)
-psi_P_adventitia = e1_adventitia * \
-    (pow(I3, e2_adventitia) + pow(I3, -e2_adventitia) - 2)
-
-psi_ti_1_media = k1_media * \
-    (exp(k2_media * conditional(gt(J4_1, 1), pow((J4_1 - 1), 2), 0)) - 1) / k2_media / 2
-psi_ti_2_media = k1_media * \
-    (exp(k2_media * conditional(gt(J4_2, 1), pow((J4_2 - 1), 2), 0)) - 1) / k2_media / 2
-psi_ti_1_adventitia = k1_adventitia * \
-    (exp(k2_adventitia * conditional(gt(J4_1, 1),
-                                     pow((J4_1 - 1), 2), 0)) - 1) / k2_adventitia / 2
-psi_ti_2_adventitia = k1_adventitia * \
-    (exp(k2_adventitia * conditional(gt(J4_2, 1),
-                                     pow((J4_2 - 1), 2), 0)) - 1) / k2_adventitia / 2
-
+psi_NH_media = NeoHookean(c1_media, F)
+psi_NH_adventitia = NeoHookean(c1_adventitia, F)
+psi_P_media = Penalty(e1_media, e2_media, I3)
+psi_P_adventitia = Penalty(e1_adventitia, e2_adventitia, I3)
+psi_ti_1_media = Tissue(k1_media, k2_media, J4_1)
+psi_ti_2_media = Tissue(k1_media, k2_media, J4_2)
+psi_ti_1_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_1)
+psi_ti_2_adventitia = Tissue(k1_adventitia, k2_adventitia, J4_2)
 
 psi_media = psi_NH_media + psi_P_media + psi_ti_1_media + psi_ti_2_media
-
 psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
     psi_ti_1_adventitia + psi_ti_2_adventitia
 
-# Set parameter values
-T = 1
-num_steps = 50
-dt = T / num_steps
-
 
 # pressure
-# P = Constant(24)
-P = Expression("24*t", t=0.0, degree=0)
+# P = Constant(1)
+P = Expression("t", t=0.0, degree=0)
 
-# Define coefficients
-k = Constant(dt)
-f = Constant((0, 0))
-
-# define variational problem
-Pi = psi_media * dx(2) + psi_adventitia * dx(3) + \
-    psi_media * dx(1) - dot(-P * n, u) * ds(1)
+Pi = psi_media * dx(1) + psi_media * dx(2) + psi_adventitia * \
+    dx(3) - dot(-P * n, u) * ds(1)
 dPi = derivative(Pi, u, w)
 J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
 
+
 # solve variational problem
-comm = MPI.comm_world
-rank = comm.Get_rank()
-if rank == 0:
-    start_time = time.time()
 problem = ProblemWithNullSpace(J, dPi, [], null_space)
 solver = SolverWithNullSpace()
 
+start_time = time.time()
+T = 17
+num_steps = 17
+dt = T / num_steps
 t = 0
 for n in range(num_steps):
     t += dt
     P.t = t
+    print("Time step " + str(n) + ", t = " + str(t))
     solver.solve(problem, u.vector())
-# if rank == 0:
-#     end_time = time.time()
-#     print("solved using {0} seconds".format(end_time - start_time))
 
-# write solution
-file = File(output_dir + "displacements.pvd")
-file << u
-PK2 = 2.0 * diff(psi, C)
-PK2Project = project(PK2, VVV)
-file = XDMFFile(output_dir + "PK2.xdmf")
-file.write(PK2Project, 0)
+    # write solution
+    file = File(output_dir + "displacements_step_" + str(n) + ".pvd")
+    file << u
 
 print("runnning time")
 print(time.time() - start_time)
