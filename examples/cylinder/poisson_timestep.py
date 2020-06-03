@@ -185,36 +185,37 @@ psi_media = psi_NH_media + psi_P_media + psi_ti_1_media + psi_ti_2_media
 psi_adventitia = psi_NH_adventitia + psi_P_adventitia + \
     psi_ti_1_adventitia + psi_ti_2_adventitia
 #
-# psi_NH_media_n = NeoHookean(c1_media, I1_n, I3_n)
-# psi_NH_adventitia_n = NeoHookean(c1_adventitia, I1_n, I3_n)
-# psi_P_media_n = Penalty(e1_media, e2_media, I3_n)
-# psi_P_adventitia_n = Penalty(e1_adventitia, e2_adventitia, I3_n)
-# psi_ti_1_media_n = Tissue(k1_media, k2_media, J4_1_n)
-# psi_ti_2_media_n = Tissue(k1_media, k2_media, J4_2_n)
-# psi_ti_1_adventitia_n = Tissue(k1_adventitia, k2_adventitia, J4_1_n)
-# psi_ti_2_adventitia_n = Tissue(k1_adventitia, k2_adventitia, J4_2_n)
-#
-# psi_media_n = psi_NH_media_n + psi_P_media_n + \
-#     psi_ti_1_media_n + psi_ti_2_media_n
-# psi_adventitia_n = psi_NH_adventitia_n + psi_P_adventitia_n + \
-#     psi_ti_1_adventitia_n + psi_ti_2_adventitia_n
+psi_NH_media_n = NeoHookean(c1_media, I1_n, I3_n)
+psi_NH_adventitia_n = NeoHookean(c1_adventitia, I1_n, I3_n)
+psi_P_media_n = Penalty(e1_media, e2_media, I3_n)
+psi_P_adventitia_n = Penalty(e1_adventitia, e2_adventitia, I3_n)
+psi_ti_1_media_n = Tissue(k1_media, k2_media, J4_1_n)
+psi_ti_2_media_n = Tissue(k1_media, k2_media, J4_2_n)
+psi_ti_1_adventitia_n = Tissue(k1_adventitia, k2_adventitia, J4_1_n)
+psi_ti_2_adventitia_n = Tissue(k1_adventitia, k2_adventitia, J4_2_n)
+
+psi_media_n = psi_NH_media_n + psi_P_media_n + \
+    psi_ti_1_media_n + psi_ti_2_media_n
+psi_adventitia_n = psi_NH_adventitia_n + psi_P_adventitia_n + \
+    psi_ti_1_adventitia_n + psi_ti_2_adventitia_n
 
 # Set parameter values
 T = 1
-num_steps = 10
+num_steps = 1
 dt = T / num_steps
 
 # pressure
-P = Constant(1)
-# P = Expression("10*t", t=0.0, degree=0)
+# P = Constant(1)
+P = Expression("2*t", t=0.0, degree=0)
 
 # define variational problem
 # Pi = psi * dx - dot(-P * n, u) * ds(1)
-Pi = psi_media * dx(1) + psi_media * dx(2) + \
-    psi_adventitia * dx(3) - dot(-P * n, u) * ds(1)
-# Pi = psi_media * dx(2) + psi_adventitia * dx(3) + psi_media * dx(1) - psi_media_n * \
-#     dx(2) - psi_adventitia_n * dx(3) - \
-#     psi_media_n * dx(1) - dot(-P * n, u) * ds(1)
+# Pi = psi_media * dx(1) + psi_media * dx(2) + \
+#     psi_adventitia * dx(3) - dot(-P * n, u) * ds(1)
+# Pi = psi_media * dx(1) + psi_media * dx(2) + psi_adventitia * dx(3) - psi_media_n * \
+#     dx(1) - psi_media_n * dx(2) - psi_adventitia_n * \
+#     dx(3) - dot(-P * n, u) * ds(1)
+Pi = psi_media * dx - psi_media_n * dx - dot(-P * n, u) * ds(1)
 dPi = derivative(Pi, u, w)
 J = derivative(dPi, u, v)
 null_space = build_nullspace(VV)
@@ -226,18 +227,18 @@ solver = SolverWithNullSpace()
 
 start_time = time.time()
 solver.solve(problem, u.vector())
-# t = 0
-# for n in range(num_steps):
-#     t += dt
-#     P.t = t
-#     print("Time step " + str(n) + ", t = " + str(t))
-#     solver.solve(problem, u.vector())
-#
-#     # write solution
-#     file = File(output_dir + "displacements_step_" + str(n) + ".pvd")
-#     file << u
-#
-#     u_n.assign(u)
+t = 0
+for n in range(num_steps):
+    t += dt
+    P.t = t
+    print("Time step " + str(n) + ", t = " + str(t))
+    solver.solve(problem, u.vector())
+
+    # write solution
+    file = File(output_dir + "displacements_step_" + str(n) + ".pvd")
+    file << u
+
+    u_n.assign(u)
 
 
 # PK2 = 2.0 * diff(psi, C)
