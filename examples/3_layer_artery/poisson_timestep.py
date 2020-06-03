@@ -150,7 +150,7 @@ I3 = det(C)
 c1_media = 9.23
 c1_adventitia = 10
 
-e1_media = 36
+e1_media = 18
 e2_media = 5
 e1_adventitia = 7
 e2_adventitia = 8.5
