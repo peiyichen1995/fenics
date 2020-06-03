@@ -152,7 +152,7 @@ c1_adventitia = 10
 
 e1_media = 36
 e2_media = 5
-e1_adventitia = 70
+e1_adventitia = 7
 e2_adventitia = 8.5
 
 k1_media = 192.86

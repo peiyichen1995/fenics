@@ -16,8 +16,8 @@ class SolverWithNullSpace(NewtonSolver):
         PETScOptions.set("ksp_gmres_restart", 1000)
         PETScOptions.set("pc_type", "asm")
         PETScOptions.set("sub_pc_type", "lu")
-        PETScOptions.set("pc_factor_shift_type", "NONZERO")
-        PETScOptions.set("pc_factor_shift_amount", 1e-6)
+        # PETScOptions.set("pc_factor_shift_type", "NONZERO")
+        # PETScOptions.set("pc_factor_shift_amount", 1e-6)
 
         self.linear_solver().set_from_options()
 
