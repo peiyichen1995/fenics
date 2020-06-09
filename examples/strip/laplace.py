@@ -19,7 +19,11 @@ output_dir = "./output/"
 mesh_dir = "./mesh/"
 
 # mesh
-mesh = BoxMesh(Point(0.0, 0.0, 0.0), Point(30., 5, 1.32), 10, 10, 10)
+mesh = BoxMesh(Point(0.0, 0.0, 0.0), Point(10., 3, 0.5), 10, 10, 10)
+
+# write mesh
+mesh_file = File(mesh_dir + "mesh.xml")
+mesh_file << mesh
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
@@ -31,13 +35,10 @@ phi = Function(V)
 
 # mark boundary subdomians
 bottom = CompiledSubDomain("near(x[2], side) && on_boundary", side=0.0)
-top = CompiledSubDomain("near(x[2], side) && on_boundary", side=1.32)
+top = CompiledSubDomain("near(x[2], side) && on_boundary", side=0.5)
 left = CompiledSubDomain("near(x[0], side) && on_boundary", side=0.0)
-right = CompiledSubDomain("near(x[0], side) && on_boundary", side=30.0)
+right = CompiledSubDomain("near(x[0], side) && on_boundary", side=10.0)
 
-# write mesh
-mesh_file = File(mesh_dir + "mesh.xml")
-mesh_file << mesh
 
 # boundary conditions
 bc_top = DirichletBC(V, Constant(1.0), top)

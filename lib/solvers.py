@@ -33,7 +33,8 @@ class CustomSolver(NewtonSolver):
         PETScOptions.set("ksp_monitor")
         PETScOptions.set("ksp_max_it", 1000)
         PETScOptions.set("ksp_gmres_restart", 200)
-        PETScOptions.set("pc_type", "asm")
-        PETScOptions.set("sub_pc_type", "lu")
+        PETScOptions.set("pc_type", "lu")
+        # PETScOptions.set("pc_type", "asm")
+        # PETScOptions.set("sub_pc_type", "lu")
 
         self.linear_solver().set_from_options()

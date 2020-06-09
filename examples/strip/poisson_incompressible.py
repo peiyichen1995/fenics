@@ -1,41 +1,16 @@
-# system imports
 from dolfin import *
-from mshr import *
 import math
-import time
-from ufl.classes import *
-from ufl.algorithms import *
-from numpy import linalg as LA
-
-# my imports
-from problems import ProblemWithNullSpace
-from solvers import SolverWithNullSpace
-from utils import my_cross
-from utils import build_nullspace
-from utils import XDMF2PVD
-
-# system imports
-from utils import build_nullspace
-from utils import my_cross
-from solvers import SolverWithNullSpace
-from problems import ProblemWithNullSpace
 import ufl
-import math
-from dolfin import *
-from mshr import *
-import numpy as np
 
 # my imports
+from problems import ProblemWithNullSpace
+from solvers import SolverWithNullSpace
+from utils import my_cross, matrix_cofactor
+from utils import build_nullspace
 from problems import CustomProblem
 from solvers import CustomSolver
-from utils import MSH2XDMF, XDMF2PVD, matrix_cofactor
 
-
-def NeoHookean(c1, F):
-    J = det(F)
-    C = F.T * F
-    C_bar = pow(J, -2 / 3) * C
-    return c1 * (tr(C_bar) - 3)
+ufl.algorithms.apply_derivatives.CONDITIONAL_WORKAROUND = True
 
 
 def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F, Q):
@@ -67,28 +42,35 @@ ffc_options = {"optimize": True,
 output_dir = "./output/"
 mesh_dir = "./mesh/"
 
-start_time = time.time()
-
-# mesh
-mesh, mf = XDMF2PVD(mesh_dir + "mesh.xdmf", mesh_dir +
-                    "mf.xdmf", mesh_dir + "mesh.pvd", mesh_dir + "mf.pvd")
+# Create mesh and define function space
+mesh = Mesh(mesh_dir + "mesh.xml")
 n = FacetNormal(mesh)
-
-# mark boundaries
-ds = Measure('ds', domain=mesh, subdomain_data=mf)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
 VV = VectorFunctionSpace(mesh, 'CG', 2)
 VVV = TensorFunctionSpace(mesh, 'DG', 1)
-Q = FunctionSpace(mesh, "CG", 1)
 
-# functions
-v = TrialFunction(VV)
-w = TestFunction(VV)
+
+# Mark boundary subdomians
+left = CompiledSubDomain("near(x[0], side) && on_boundary", side=0.0)
+right = CompiledSubDomain("near(x[0], side) && on_boundary", side=10.0)
+
+# Define Dirichlet boundary (x = 0 or x = 1)
+l = Expression(('0', '0', '0.0'), element=VV.ufl_element())
+# r = Expression(('1', '0', '0'), element=VV.ufl_element())
+r = Constant(0.5)
+
+bc_r = DirichletBC(VV.sub(0), r, right)
+bc_l = DirichletBC(VV, l, left)
+bcs = [bc_r, bc_l]
+
+# Define functions
+v = TrialFunction(VV)            # Incremental displacement
+w = TestFunction(VV)             # Test function
+u = Function(VV)                 # Displacement from previous iteration
 phi1 = Function(V)
 phi2 = Function(V)
-u = Function(VV)
 
 # read in laplace solutions
 phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
@@ -108,20 +90,24 @@ e1 = e1 / sqrt(inner(e1, e1))
 e2 = e2 / sqrt(inner(e2, e2))
 e3 = e3 / sqrt(inner(e3, e3))
 
-# defin tissue orientation on the spatial varying basis
-theta = 46.274 / 180 * math.pi
+# define tissue orientation on the spatial varying basis
+theta = math.pi / 6
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
-
 # Kinematics
 d = u.geometric_dimension()
-I = Identity(d)
+I = Identity(d)             # Identity tensor
 F = I + grad(u)
+C = variable(F.T * F)
+M1 = outer(a1, a1)
+M2 = outer(a2, a2)
+J4_1 = tr(C * M1)
+J4_2 = tr(C * M2)
+I1 = tr(C)
+I2 = 1 / 2 * (tr(C) * tr(C) - tr(C * C))
+I3 = det(C)
 
-
-# pressure
-P = Expression("t", t=0.0, degree=0)
 
 mu1 = 4.1543
 mu2 = 2.5084
@@ -129,39 +115,29 @@ mu3 = 9.7227
 mu4 = 19.285
 beta3 = 3.6537
 beta4 = 500.02
-delta = 0.2
 
-psi = NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F, V)
-Pi = psi * dx - dot(-P * n, u) * ds(1)
 
+# Total potential energy
+psi = NeoHookean_imcompressible(
+    mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F, V)
+Pi = psi * dx
+
+# Compute first variation of Pi (directional derivative about u in the direction of v)
 dPi = derivative(Pi, u, w)
+
+# Compute Jacobian of F
 J = derivative(dPi, u, v)
-null_space = build_nullspace(VV)
 
+problem = CustomProblem(J, dPi, bcs)
+solver = CustomSolver()
+solver.solve(problem, u.vector())
 
-# solve variational problem
-problem = ProblemWithNullSpace(J, dPi, [], null_space)
-solver = SolverWithNullSpace()
+# write solution
+file = File(output_dir + "displacements.pvd")
+file << u
 
+PK2 = 2.0 * diff(psi, C)
+PK2Project = project(PK2, VVV)
 
-start_time = time.time()
-T = 1
-num_steps = 1
-dt = T / num_steps
-t = 0
-for n in range(num_steps):
-    t += dt
-    P.t = t
-    print("Time step " + str(n) + ", t = " + str(t))
-    solver.solve(problem, u.vector())
-
-    # write solution
-    file = File(output_dir + "displacements_step_" + str(n) + ".pvd")
-    file << u
-
-print("runnning time")
-print(time.time() - start_time)
-
-file1 = open("myfile.txt", "w")  # write mode
-file1.write(time.time() - start_time)
-file1.close()
+file = XDMFFile(output_dir + "PK2Tensor.xdmf")
+file.write(PK2Project, 0)
