@@ -35,6 +35,11 @@ def NeoHookean(c1, F):
     return c1 * (tr(C_bar) - 3)
 
 
+def NeoHookean_imcompressible(mu, F):
+
+    return mu / 2 * (dot(F, F) - 3)
+
+
 def Penalty(e1, e2, I3):
     return e1 * (pow(I3, e2) + pow(I3, -e2) - 2)
 
