@@ -115,7 +115,7 @@ e2 = e2 / sqrt(inner(e2, e2))
 e3 = e3 / sqrt(inner(e3, e3))
 
 # define tissue orientation on the spatial varying basis
-theta = math.pi / 6
+theta = math.pi / 3
 a1 = math.cos(theta) * e3 + math.sin(theta) * e2
 a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
@@ -191,7 +191,7 @@ solver.parameters['newton_solver']['linear_solver'] = 'mumps'
 
 # Time stepping parameters
 dt = 0.1
-t, T = 0.0, 10 * dt
+t, T = 0.0, 20 * dt
 
 # Save solution in VTK format
 file_results = XDMFFile("./Results/TestUniaxialLoading/Uniaxial.xdmf")

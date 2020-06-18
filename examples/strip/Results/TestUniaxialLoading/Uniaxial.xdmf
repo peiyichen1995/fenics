@@ -201,6 +201,168 @@
           <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/32</DataItem>
         </Attribute>
       </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/33/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/33/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.0999999999999999" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/33</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/34</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/35</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/36/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/36/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.2" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/36</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/37</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/38</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/39/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/39/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.3" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/39</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/40</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/41</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/42/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/42/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.4000000000000001" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/42</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/43</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/44</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/45/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/45/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.5000000000000002" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/45</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/46</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/47</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/48/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/48/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.6000000000000003" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/48</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/49</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/50</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/51/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/51/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.7000000000000004" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/51</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/52</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/53</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/54/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/54/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.8000000000000005" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/54</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/55</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/56</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">Uniaxial.h5:/Mesh/57/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/Mesh/57/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.9000000000000006" />
+        <Attribute Name="u" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="1331 3" Format="HDF">Uniaxial.h5:/VisualisationVector/57</DataItem>
+        </Attribute>
+        <Attribute Name="F" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/58</DataItem>
+        </Attribute>
+        <Attribute Name="PK1" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="6000 9" Format="HDF">Uniaxial.h5:/VisualisationVector/59</DataItem>
+        </Attribute>
+      </Grid>
     </Grid>
   </Domain>
 </Xdmf>

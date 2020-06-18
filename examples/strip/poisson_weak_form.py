@@ -146,10 +146,8 @@ exit()
 delta_E = (F.T * grad(v) + grad(v).T * F) / 2
 S_isc = 2.0 * diff(psi, C) - g3 * sqrt(det(F)) * \
     h_prime(sqrt(det(F)), beta3) * inv(C)
-# a = inner(S_isc + det(F) * h_prime(det(F), beta3) * inv(C), delta_E) * dx
-a = inner(S_isc + det(F) * p_bar * inv(C), delta_E) * dx
-A = assemble(a)
-print(type(a))
+a = inner(S_isc + det(F) * h_prime(det(F), beta3) * inv(C), delta_E) * dx
+
 
 # A = 0 * inner(S_isc + det(F) * p_bar * inv(C), delta_E) * dx
 
