@@ -79,6 +79,7 @@ ds = Measure('ds', domain=mesh, subdomain_data=mf)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
+exit()
 VV = VectorFunctionSpace(mesh, 'CG', 2)
 VVV = TensorFunctionSpace(mesh, 'DG', 1)
 Q = FunctionSpace(mesh, "CG", 1)

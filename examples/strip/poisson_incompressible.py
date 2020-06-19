@@ -123,7 +123,7 @@ psi = NeoHookean_imcompressible(
 Pi = psi * dx
 
 # Compute first variation of Pi (directional derivative about u in the direction of v)
-dPi = derivative(Pi, u, w) + (det(F) - 1) * w * dx
+dPi = derivative(Pi, u, w)  # + (det(F) - 1) * w * dx
 
 # Compute Jacobian of F
 J = derivative(dPi, u, v)

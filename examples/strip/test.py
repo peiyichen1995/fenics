@@ -2,7 +2,6 @@
 from dolfin import *
 import matplotlib.pyplot as plt
 import os
-import dolfin as dlf
 import numpy as np
 import math
 
