@@ -173,7 +173,7 @@ solver.parameters['newton_solver']['linear_solver'] = 'mumps'
 
 # Time stepping parameters
 dt = 0.1
-t, T = 0.0, 10 * dt
+t, T = 0.0, 1 * dt
 
 # Save solution in VTK format
 file_results = XDMFFile("./Results/TestUniaxialLoading/Uniaxial.xdmf")
