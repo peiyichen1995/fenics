@@ -1,389 +1,44 @@
-Process 0: Computed global bounding box tree with 147 boxes.
-Process 1: Computed global bounding box tree with 147 boxes.
-Process 2: Computed global bounding box tree with 147 boxes.
-Process 3: Computed global bounding box tree with 147 boxes.
-Process 4: Computed global bounding box tree with 147 boxes.
-Process 5: Computed global bounding box tree with 147 boxes.
-Process 6: Computed global bounding box tree with 147 boxes.
-Process 7: Computed global bounding box tree with 147 boxes.
-Process 8: Computed global bounding box tree with 147 boxes.
-Process 9: Computed global bounding box tree with 147 boxes.
-Process 10: Computed global bounding box tree with 147 boxes.
-Process 11: Computed global bounding box tree with 147 boxes.
-Process 12: Computed global bounding box tree with 147 boxes.
-Process 13: Computed global bounding box tree with 147 boxes.
-Process 14: Computed global bounding box tree with 147 boxes.
-Process 15: Computed global bounding box tree with 147 boxes.
-Process 16: Computed global bounding box tree with 147 boxes.
-Process 17: Computed global bounding box tree with 147 boxes.
-Process 18: Computed global bounding box tree with 147 boxes.
-Process 19: Computed global bounding box tree with 147 boxes.
-Process 20: Computed global bounding box tree with 147 boxes.
-Process 21: Computed global bounding box tree with 147 boxes.
-Process 22: Computed global bounding box tree with 147 boxes.
-Process 23: Computed global bounding box tree with 147 boxes.
-Process 24: Computed global bounding box tree with 147 boxes.
-Process 25: Computed global bounding box tree with 147 boxes.
-Process 26: Computed global bounding box tree with 147 boxes.
-Process 27: Computed global bounding box tree with 147 boxes.
-Process 28: Computed global bounding box tree with 147 boxes.
-Process 29: Computed global bounding box tree with 147 boxes.
-Process 30: Computed global bounding box tree with 147 boxes.
-Process 31: Computed global bounding box tree with 147 boxes.
-Process 32: Computed global bounding box tree with 147 boxes.
-Process 33: Computed global bounding box tree with 147 boxes.
-Process 34: Computed global bounding box tree with 147 boxes.
-Process 35: Computed global bounding box tree with 147 boxes.
-Process 36: Computed global bounding box tree with 147 boxes.
-Process 37: Computed global bounding box tree with 147 boxes.
-Process 38: Computed global bounding box tree with 147 boxes.
-Process 39: Computed global bounding box tree with 147 boxes.
-Process 40: Computed global bounding box tree with 147 boxes.
-Process 41: Computed global bounding box tree with 147 boxes.
-Process 42: Computed global bounding box tree with 147 boxes.
-Process 43: Computed global bounding box tree with 147 boxes.
-Process 44: Computed global bounding box tree with 147 boxes.
-Process 45: Computed global bounding box tree with 147 boxes.
-Process 46: Computed global bounding box tree with 147 boxes.
-Process 47: Computed global bounding box tree with 147 boxes.
-Process 48: Computed global bounding box tree with 147 boxes.
-Process 49: Computed global bounding box tree with 147 boxes.
-Process 50: Computed global bounding box tree with 147 boxes.
-Process 51: Computed global bounding box tree with 147 boxes.
-Process 52: Computed global bounding box tree with 147 boxes.
-Process 53: Computed global bounding box tree with 147 boxes.
-Process 54: Computed global bounding box tree with 147 boxes.
-Process 55: Computed global bounding box tree with 147 boxes.
-Process 56: Computed global bounding box tree with 147 boxes.
-Process 57: Computed global bounding box tree with 147 boxes.
-Process 58: Computed global bounding box tree with 147 boxes.
-Process 59: Computed global bounding box tree with 147 boxes.
-Process 60: Computed global bounding box tree with 147 boxes.
-Process 61: Computed global bounding box tree with 147 boxes.
-Process 62: Computed global bounding box tree with 147 boxes.
-Process 63: Computed global bounding box tree with 147 boxes.
-Process 64: Computed global bounding box tree with 147 boxes.
-Process 65: Computed global bounding box tree with 147 boxes.
-Process 66: Computed global bounding box tree with 147 boxes.
-Process 67: Computed global bounding box tree with 147 boxes.
-Process 68: Computed global bounding box tree with 147 boxes.
-Process 69: Computed global bounding box tree with 147 boxes.
-Process 70: Computed global bounding box tree with 147 boxes.
-Process 71: Computed global bounding box tree with 147 boxes.
-Process 72: Computed global bounding box tree with 147 boxes.
-Process 73: Computed global bounding box tree with 147 boxes.
 Calling FFC just-in-time (JIT) compiler, this may take some time.
-Process 0: Newton iteration 0: r (abs) = 3.447e-01 (tol = 1.000e-10) r (rel) = 1.000e+00 (tol = 1.000e-09)
 Calling FFC just-in-time (JIT) compiler, this may take some time.
-  0 KSP Residual norm 3.731884585643e+00 
-  1 KSP Residual norm 1.035114379078e+00 
-  2 KSP Residual norm 9.355012783027e-01 
-  3 KSP Residual norm 8.611485441448e-01 
-  4 KSP Residual norm 8.157897828074e-01 
-  5 KSP Residual norm 7.973440538040e-01 
-  6 KSP Residual norm 7.959079793540e-01 
-  7 KSP Residual norm 7.947577004635e-01 
-  8 KSP Residual norm 7.868423840868e-01 
-  9 KSP Residual norm 7.824782331583e-01 
- 10 KSP Residual norm 7.796699005648e-01 
- 11 KSP Residual norm 7.786895570175e-01 
- 12 KSP Residual norm 7.785952966343e-01 
- 13 KSP Residual norm 7.785599119257e-01 
- 14 KSP Residual norm 7.783751631233e-01 
- 15 KSP Residual norm 7.781411281716e-01 
- 16 KSP Residual norm 7.780510305901e-01 
- 17 KSP Residual norm 7.774510022721e-01 
- 18 KSP Residual norm 7.770108051960e-01 
- 19 KSP Residual norm 7.754372312715e-01 
- 20 KSP Residual norm 7.713675041015e-01 
- 21 KSP Residual norm 7.651687306078e-01 
- 22 KSP Residual norm 7.630887609872e-01 
- 23 KSP Residual norm 7.577632163394e-01 
- 24 KSP Residual norm 7.559146772180e-01 
- 25 KSP Residual norm 7.554911745663e-01 
- 26 KSP Residual norm 7.552928233307e-01 
- 27 KSP Residual norm 7.552774137109e-01 
- 28 KSP Residual norm 7.531838138654e-01 
- 29 KSP Residual norm 7.487427672859e-01 
- 30 KSP Residual norm 7.435608670264e-01 
- 31 KSP Residual norm 7.357721345876e-01 
- 32 KSP Residual norm 7.315677154318e-01 
- 33 KSP Residual norm 7.291050490215e-01 
- 34 KSP Residual norm 7.265631588215e-01 
- 35 KSP Residual norm 7.264259335097e-01 
- 36 KSP Residual norm 7.259376348504e-01 
- 37 KSP Residual norm 7.257308392707e-01 
- 38 KSP Residual norm 7.250389711781e-01 
- 39 KSP Residual norm 7.250262625084e-01 
- 40 KSP Residual norm 7.245768744132e-01 
- 41 KSP Residual norm 7.240972003332e-01 
- 42 KSP Residual norm 7.235037778495e-01 
- 43 KSP Residual norm 7.213023553941e-01 
- 44 KSP Residual norm 7.203124345689e-01 
- 45 KSP Residual norm 7.202771054622e-01 
- 46 KSP Residual norm 7.202682104605e-01 
- 47 KSP Residual norm 7.200296877808e-01 
- 48 KSP Residual norm 7.198926519432e-01 
- 49 KSP Residual norm 7.195646187131e-01 
- 50 KSP Residual norm 7.174963735864e-01 
- 51 KSP Residual norm 7.146155212799e-01 
- 52 KSP Residual norm 7.115829872471e-01 
- 53 KSP Residual norm 7.067217448625e-01 
- 54 KSP Residual norm 7.044185673251e-01 
- 55 KSP Residual norm 7.033353097322e-01 
- 56 KSP Residual norm 7.033035373903e-01 
- 57 KSP Residual norm 7.032998490259e-01 
- 58 KSP Residual norm 7.029816020143e-01 
- 59 KSP Residual norm 7.025755698822e-01 
- 60 KSP Residual norm 7.022223465158e-01 
- 61 KSP Residual norm 7.022112299376e-01 
- 62 KSP Residual norm 7.019125151505e-01 
- 63 KSP Residual norm 6.996443525852e-01 
- 64 KSP Residual norm 6.966245848234e-01 
- 65 KSP Residual norm 6.963419989438e-01 
- 66 KSP Residual norm 6.963418310180e-01 
- 67 KSP Residual norm 6.959916279779e-01 
- 68 KSP Residual norm 6.959689649804e-01 
- 69 KSP Residual norm 6.958782942905e-01 
- 70 KSP Residual norm 6.958584577675e-01 
- 71 KSP Residual norm 6.931303806183e-01 
- 72 KSP Residual norm 6.864731630363e-01 
- 73 KSP Residual norm 6.807829829441e-01 
- 74 KSP Residual norm 6.758502814634e-01 
- 75 KSP Residual norm 6.737179009615e-01 
- 76 KSP Residual norm 6.722862782627e-01 
- 77 KSP Residual norm 6.720845018946e-01 
- 78 KSP Residual norm 6.714695451235e-01 
- 79 KSP Residual norm 6.711508640281e-01 
- 80 KSP Residual norm 6.707908539912e-01 
- 81 KSP Residual norm 6.707891808097e-01 
- 82 KSP Residual norm 6.702426316829e-01 
- 83 KSP Residual norm 6.672662387233e-01 
- 84 KSP Residual norm 6.628824309237e-01 
- 85 KSP Residual norm 6.627708125572e-01 
- 86 KSP Residual norm 6.626396102079e-01 
- 87 KSP Residual norm 6.622835821502e-01 
- 88 KSP Residual norm 6.609261766977e-01 
- 89 KSP Residual norm 6.577088541511e-01 
- 90 KSP Residual norm 6.548692917778e-01 
- 91 KSP Residual norm 6.518581449100e-01 
- 92 KSP Residual norm 6.471404513102e-01 
- 93 KSP Residual norm 6.452486823058e-01 
- 94 KSP Residual norm 6.424003052459e-01 
- 95 KSP Residual norm 6.393445031544e-01 
- 96 KSP Residual norm 6.378397369148e-01 
- 97 KSP Residual norm 6.378358293804e-01 
- 98 KSP Residual norm 6.378069291591e-01 
- 99 KSP Residual norm 6.377115711589e-01 
-100 KSP Residual norm 6.371107141409e-01 
-101 KSP Residual norm 6.371026250946e-01 
-102 KSP Residual norm 6.370470665623e-01 
-103 KSP Residual norm 6.362197923849e-01 
-104 KSP Residual norm 6.353179296994e-01 
-105 KSP Residual norm 6.348928400780e-01 
-106 KSP Residual norm 6.348661295647e-01 
-107 KSP Residual norm 6.345457516716e-01 
-108 KSP Residual norm 6.345327440933e-01 
-109 KSP Residual norm 6.345110495047e-01 
-110 KSP Residual norm 6.344691564075e-01 
-111 KSP Residual norm 6.342124092226e-01 
-112 KSP Residual norm 6.339127440617e-01 
-113 KSP Residual norm 6.339110329255e-01 
-114 KSP Residual norm 6.338838353246e-01 
-115 KSP Residual norm 6.338588600099e-01 
-116 KSP Residual norm 6.337870741291e-01 
-117 KSP Residual norm 6.336403933023e-01 
-118 KSP Residual norm 6.336275397993e-01 
-119 KSP Residual norm 6.336190213456e-01 
-120 KSP Residual norm 6.333168798000e-01 
-121 KSP Residual norm 6.312533492108e-01 
-122 KSP Residual norm 6.301843886698e-01 
-123 KSP Residual norm 6.282385704274e-01 
-124 KSP Residual norm 6.280946116172e-01 
-125 KSP Residual norm 6.278208784597e-01 
-126 KSP Residual norm 6.278122759532e-01 
-127 KSP Residual norm 6.277890659594e-01 
-128 KSP Residual norm 6.277691990696e-01 
-129 KSP Residual norm 6.263942726764e-01 
-130 KSP Residual norm 6.259767443744e-01 
-131 KSP Residual norm 6.255584960544e-01 
-132 KSP Residual norm 6.255325697472e-01 
-133 KSP Residual norm 6.254219526556e-01 
-134 KSP Residual norm 6.251284114637e-01 
-135 KSP Residual norm 6.247595566042e-01 
-136 KSP Residual norm 6.241475082633e-01 
-137 KSP Residual norm 6.215025740954e-01 
-138 KSP Residual norm 6.181732100517e-01 
-139 KSP Residual norm 6.161803424391e-01 
-140 KSP Residual norm 6.142858630119e-01 
-141 KSP Residual norm 6.135502502779e-01 
-142 KSP Residual norm 6.128844383616e-01 
-143 KSP Residual norm 6.128484856329e-01 
-144 KSP Residual norm 6.126161187794e-01 
-145 KSP Residual norm 6.125683963412e-01 
-146 KSP Residual norm 6.125298044565e-01 
-147 KSP Residual norm 6.122945596087e-01 
-148 KSP Residual norm 6.121619902094e-01 
-149 KSP Residual norm 6.105125204736e-01 
-150 KSP Residual norm 6.088870103893e-01 
-151 KSP Residual norm 6.068718295743e-01 
-152 KSP Residual norm 6.052752734458e-01 
-153 KSP Residual norm 6.022420941361e-01 
-154 KSP Residual norm 5.993319407399e-01 
-155 KSP Residual norm 5.954042913161e-01 
-156 KSP Residual norm 5.932599807085e-01 
-157 KSP Residual norm 5.910738979247e-01 
-158 KSP Residual norm 5.906267559748e-01 
-159 KSP Residual norm 5.904808625732e-01 
-160 KSP Residual norm 5.904311173196e-01 
-161 KSP Residual norm 5.902680129799e-01 
-162 KSP Residual norm 5.897799832010e-01 
-163 KSP Residual norm 5.897769539520e-01 
-164 KSP Residual norm 5.897387862784e-01 
-165 KSP Residual norm 5.897365142743e-01 
-166 KSP Residual norm 5.896434047180e-01 
-167 KSP Residual norm 5.892688816654e-01 
-168 KSP Residual norm 5.884579261487e-01 
-169 KSP Residual norm 5.861679116560e-01 
-170 KSP Residual norm 5.846455121527e-01 
-171 KSP Residual norm 5.839558551521e-01 
-172 KSP Residual norm 5.839520948910e-01 
-173 KSP Residual norm 5.839040687510e-01 
-174 KSP Residual norm 5.838384085639e-01 
-175 KSP Residual norm 5.837362174528e-01 
-176 KSP Residual norm 5.837338096202e-01 
-177 KSP Residual norm 5.837216729818e-01 
-178 KSP Residual norm 5.834379558547e-01 
-179 KSP Residual norm 5.833482936204e-01 
-180 KSP Residual norm 5.833422965027e-01 
-181 KSP Residual norm 5.831581717819e-01 
-182 KSP Residual norm 5.831334742767e-01 
-183 KSP Residual norm 5.830186515175e-01 
-184 KSP Residual norm 5.821361590025e-01 
-185 KSP Residual norm 5.820655444881e-01 
-186 KSP Residual norm 5.803443718679e-01 
-187 KSP Residual norm 5.798810354385e-01 
-188 KSP Residual norm 5.796126109031e-01 
-189 KSP Residual norm 5.795971236867e-01 
-190 KSP Residual norm 5.789900311578e-01 
-191 KSP Residual norm 5.786259148513e-01 
-192 KSP Residual norm 5.786161310966e-01 
-193 KSP Residual norm 5.784714691397e-01 
-194 KSP Residual norm 5.783712641074e-01 
-195 KSP Residual norm 5.778544004021e-01 
-196 KSP Residual norm 5.775125471585e-01 
-197 KSP Residual norm 5.773876638957e-01 
-198 KSP Residual norm 5.773792871711e-01 
-199 KSP Residual norm 5.773295947058e-01 
-200 KSP Residual norm 5.772808024152e-01 
-201 KSP Residual norm 5.772804480484e-01 
-202 KSP Residual norm 5.772803337642e-01 
-203 KSP Residual norm 5.772803178343e-01 
-204 KSP Residual norm 5.772797307819e-01 
-205 KSP Residual norm 5.772793721002e-01 
-206 KSP Residual norm 5.772789805255e-01 
-207 KSP Residual norm 5.772789089923e-01 
-208 KSP Residual norm 5.772788414118e-01 
-209 KSP Residual norm 5.772785533231e-01 
-210 KSP Residual norm 5.772785529091e-01 
-211 KSP Residual norm 5.772784402263e-01 
-212 KSP Residual norm 5.772781234754e-01 
-213 KSP Residual norm 5.772778328239e-01 
-214 KSP Residual norm 5.772777128664e-01 
-215 KSP Residual norm 5.772777128456e-01 
-216 KSP Residual norm 5.772776903267e-01 
-217 KSP Residual norm 5.772776502196e-01 
-218 KSP Residual norm 5.772775921278e-01 
-219 KSP Residual norm 5.772773904175e-01 
-220 KSP Residual norm 5.772763665037e-01 
-221 KSP Residual norm 5.772762796574e-01 
-222 KSP Residual norm 5.772759081154e-01 
-223 KSP Residual norm 5.772754147323e-01 
-224 KSP Residual norm 5.772754121714e-01 
-225 KSP Residual norm 5.772754104694e-01 
-226 KSP Residual norm 5.772751737507e-01 
-227 KSP Residual norm 5.772744369983e-01 
-228 KSP Residual norm 5.772743476263e-01 
-229 KSP Residual norm 5.772743362694e-01 
-230 KSP Residual norm 5.772743343053e-01 
-231 KSP Residual norm 5.772742413433e-01 
-232 KSP Residual norm 5.772738918150e-01 
-233 KSP Residual norm 5.772738641668e-01 
-234 KSP Residual norm 5.772733029158e-01 
-235 KSP Residual norm 5.772731566864e-01 
-236 KSP Residual norm 5.772731365382e-01 
-237 KSP Residual norm 5.772723468456e-01 
-238 KSP Residual norm 5.772723467197e-01 
-239 KSP Residual norm 5.772722196357e-01 
-240 KSP Residual norm 5.772721728422e-01 
-241 KSP Residual norm 5.772719892093e-01 
-242 KSP Residual norm 5.772717027427e-01 
-243 KSP Residual norm 5.772714799978e-01 
-244 KSP Residual norm 5.772709595194e-01 
-245 KSP Residual norm 5.772708051874e-01 
-246 KSP Residual norm 5.772704197085e-01 
-247 KSP Residual norm 5.772704177901e-01 
-248 KSP Residual norm 5.772702727540e-01 
-249 KSP Residual norm 5.772699911624e-01 
-250 KSP Residual norm 5.772697027996e-01 
-251 KSP Residual norm 5.772696350259e-01 
-252 KSP Residual norm 5.772683077256e-01 
-253 KSP Residual norm 5.772681962037e-01 
-254 KSP Residual norm 5.772679063139e-01 
-255 KSP Residual norm 5.772678937322e-01 
-256 KSP Residual norm 5.772678626012e-01 
-257 KSP Residual norm 5.772674569423e-01 
-258 KSP Residual norm 5.772661714562e-01 
-259 KSP Residual norm 5.772661605194e-01 
-260 KSP Residual norm 5.772658618240e-01 
-261 KSP Residual norm 5.772646581944e-01 
-262 KSP Residual norm 5.772643719274e-01 
-263 KSP Residual norm 5.772643718528e-01 
-264 KSP Residual norm 5.772635861217e-01 
-265 KSP Residual norm 5.772635420548e-01 
-266 KSP Residual norm 5.772635379613e-01 
-267 KSP Residual norm 5.772619036136e-01 
-268 KSP Residual norm 5.772609275288e-01 
-269 KSP Residual norm 5.772609234998e-01 
-270 KSP Residual norm 5.772607945447e-01 
-271 KSP Residual norm 5.772560688966e-01 
-272 KSP Residual norm 5.772558679247e-01 
-273 KSP Residual norm 5.772541389787e-01 
-274 KSP Residual norm 5.772526560272e-01 
-275 KSP Residual norm 5.772496442364e-01 
-276 KSP Residual norm 5.772475846604e-01 
-277 KSP Residual norm 5.772458756412e-01 
-278 KSP Residual norm 5.772456990252e-01 
-279 KSP Residual norm 5.772449938416e-01 
-280 KSP Residual norm 5.772446893346e-01 
-281 KSP Residual norm 5.772445969102e-01 
-282 KSP Residual norm 5.772445427277e-01 
-283 KSP Residual norm 5.772440427089e-01 
-284 KSP Residual norm 5.772433143631e-01 
-285 KSP Residual norm 5.772386756766e-01 
-286 KSP Residual norm 5.772366284657e-01 
-287 KSP Residual norm 5.772362113438e-01 
-288 KSP Residual norm 5.772346348272e-01 
-289 KSP Residual norm 5.772341565623e-01 
-290 KSP Residual norm 5.772337610061e-01 
-291 KSP Residual norm 5.772289245528e-01 
-292 KSP Residual norm 5.772282876551e-01 
-293 KSP Residual norm 5.772265102996e-01 
-294 KSP Residual norm 5.772264863392e-01 
-295 KSP Residual norm 5.772261673688e-01 
-296 KSP Residual norm 5.772222687351e-01 
-297 KSP Residual norm 5.772153775438e-01 
-298 KSP Residual norm 5.772123577508e-01 
-299 KSP Residual norm 5.772109631322e-01 
-300 KSP Residual norm 5.772027538814e-01 
-301 KSP Residual norm 5.771884253283e-01 
-302 KSP Residual norm 5.771815354678e-01 
-303 KSP Residual norm 5.771804936022e-01 
-304 KSP Residual norm 5.771791846701e-01 
-305 KSP Residual norm 5.771664806688e-01 
-306 KSP Residual norm 5.771552115851e-01 
-307 KSP Residual norm 5.771526432518e-01 
-308 KSP Residual norm 5.771439393996e-01 
-309 KSP Residual norm 5.771425530371e-01 
-310 KSP Residual norm 5.771418041696e-01 
-311 KSP Residual norm 5.771367067583e-01 
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Process 0: Solving nonlinear variational problem.
+Process 1: Solving nonlinear variational problem.
+Process 2: Solving nonlinear variational problem.
+Process 3: Solving nonlinear variational problem.
+  Process 0: Newton iteration 0: r (abs) = 6.968e+02 (tol = 1.000e-10) r (rel) = 1.000e+00 (tol = 1.000e-06)
+  Process 0: Newton iteration 1: r (abs) = 5.539e-12 (tol = 1.000e-10) r (rel) = 7.950e-15 (tol = 1.000e-06)
+  Process 0: Newton solver finished in 1 iterations and 1 linear solver iterations.
+Process 0: Solving nonlinear variational problem.
+Process 1: Solving nonlinear variational problem.
+Process 2: Solving nonlinear variational problem.
+Process 3: Solving nonlinear variational problem.
+  Process 0: Newton iteration 0: r (abs) = 5.539e-12 (tol = 1.000e-10) r (rel) = 1.000e+00 (tol = 1.000e-06)
+  Process 0: Newton solver finished in 0 iterations and 0 linear solver iterations.
+time:  0.0
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Calling FFC just-in-time (JIT) compiler, this may take some time.
+Process 0: Solving nonlinear variational problem.
+Process 1: Solving nonlinear variational problem.
+Process 2: Solving nonlinear variational problem.
+Process 3: Solving nonlinear variational problem.
+  Process 0: Newton iteration 0: r (abs) = 1.246e-01 (tol = 1.000e-10) r (rel) = 1.000e+00 (tol = 1.000e-06)
+  Process 0: Newton iteration 1: r (abs) = -nan (tol = 1.000e-10) r (rel) = -nan (tol = 1.000e-06)
+time:  0.1
+time:  0.0
+time:  0.1
+time:  0.0
+time:  0.1
+time:  0.0
+time:  0.1
