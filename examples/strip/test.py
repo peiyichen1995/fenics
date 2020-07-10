@@ -46,20 +46,19 @@ def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F):
     return temp1 + temp2 + temp3 + temp4 + temp5
 
 
-def pk2Stress(u, pressure, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
-    G = E / (2 * (1 + nu))
-    c1 = G / 2.0
+def pk2Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
 
     I = Identity(V.mesh().geometry().dim())  # Identity tensor
     F = I + grad(u)          # Deformation gradient
     # C = F.T * F                # Right Cauchy-Green tensor
     C = variable(F.T * F)
+    F = variable(F)
     Ic = tr(C)               # Invariants of deformation tensors
     J = det(F)
-    pk2 = 2 * c1 * I - pressure * inv(C)  # second PK stress
     NH = NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F)
     PK2 = 2.0 * diff(NH, C)
-    return pk2, (J - 1), (F.T * F)
+    PK1 = diff(NH, F)
+    return PK1, (J - 1), (F.T * F)
 
 
 def geometry_3d(mesh_dir):
@@ -173,10 +172,11 @@ g3 = 9.7227
 
 # # Total potential energy
 pkstrs, hydpress, C_s = pk2Stress(
-    u, p, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
+    u, p, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
 I = Identity(V.mesh().geometry().dim())
 dgF = I + grad(u)
-F1 = inner(dot(dgF, pkstrs), grad(_u)) * dx - dot(b, _u) * dx - dot(h, _u) * ds
+F1 = inner(pkstrs - p * inv(dgF).T, grad(_u)) * \
+    dx - dot(b, _u) * dx - dot(h, _u) * ds
 F2 = hydpress * _p * dx
 F = F1 + F2
 J = derivative(F, _u_p, dup)
@@ -225,7 +225,7 @@ while t <= T:
 
     # get stress at a point for plotting
     PK1_s, thydpress, C_s = pk2Stress(
-        u_plot, p_plot, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
+        u_plot, p_plot, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
     PK1_stress.assign(project(PK1_s, W_DFnStress))
     C_stress.assign(project(C_s, W_DFnStress))
     stress_vec.append(PK1_stress(point)[0])
