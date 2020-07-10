@@ -46,7 +46,7 @@ def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F):
     return temp1 + temp2 + temp3 + temp4 + temp5
 
 
-def pk1Stress(u, pressure, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
+def pk2Stress(u, pressure, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
     G = E / (2 * (1 + nu))
     c1 = G / 2.0
 
@@ -59,7 +59,7 @@ def pk1Stress(u, pressure, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
     pk2 = 2 * c1 * I - pressure * inv(C)  # second PK stress
     NH = NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F)
     PK2 = 2.0 * diff(NH, C)
-    return pk2, (J - 1)
+    return pk2, (J - 1), (F.T * F)
 
 
 def geometry_3d(mesh_dir):
@@ -145,7 +145,7 @@ u, p = split(_u_p)
 W_DFnStress = TensorFunctionSpace(mesh, "DG", degree=0)
 defGrad = Function(W_DFnStress, name='F')
 PK1_stress = Function(W_DFnStress, name='PK1')
-
+C_stress = Function(W_DFnStress, name='Cauchy')
 
 # Displacement from previous iteration
 b = Constant((0.0, 0.0, 0.0))  # Body force per unit mass
@@ -157,7 +157,7 @@ bc0 = DirichletBC(V.sub(0).sub(0), Constant(0.), facet_function, 1)
 bc1 = DirichletBC(V.sub(0).sub(1), Constant(0.), facet_function, 2)
 bc2 = DirichletBC(V.sub(0).sub(2), Constant(0.), facet_function, 3)
 
-tDirBC = Expression(('1.0*time_'), time_=0.0, degree=0)
+tDirBC = Expression(('2.0*time_'), time_=0.0, degree=0)
 bc3 = DirichletBC(V.sub(0).sub(0), tDirBC, facet_function, 4)
 bcs = [bc0, bc1, bc2, bc3]
 
@@ -172,7 +172,7 @@ beta4 = 500.02
 g3 = 9.7227
 
 # # Total potential energy
-pkstrs, hydpress = pk1Stress(
+pkstrs, hydpress, C_s = pk2Stress(
     u, p, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
 I = Identity(V.mesh().geometry().dim())
 dgF = I + grad(u)
@@ -200,6 +200,7 @@ file_results.parameters["functions_share_mesh"] = True
 stretch_vec = []
 stress_vec = []
 stress_ana = []
+cauchy_stress = []
 
 while t <= T:
     print('time: ', t)
@@ -217,16 +218,18 @@ while t <= T:
     p_plot.rename("p", "pressure")
 
     # get stretch at a point for plotting
-    point = (0.5, 0.5, 0)
+    point = (5, 1.5, 0)
     DF = I + grad(u_plot)
     defGrad.assign(project(DF, W_DFnStress))
     stretch_vec.append(defGrad(point)[0])
 
     # get stress at a point for plotting
-    PK1_s, thydpress = pk1Stress(
+    PK1_s, thydpress, C_s = pk2Stress(
         u_plot, p_plot, E, nu, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
     PK1_stress.assign(project(PK1_s, W_DFnStress))
+    C_stress.assign(project(C_s, W_DFnStress))
     stress_vec.append(PK1_stress(point)[0])
+    cauchy_stress.append(C_stress(point)[0])
 
     # save xdmf file
     file_results.write(u_plot, t)
@@ -240,6 +243,7 @@ while t <= T:
 # get analytical solution
 stretch_vec = np.array(stretch_vec)
 stress_vec = np.array(stress_vec)
+cauchy_stress = np.array(cauchy_stress)
 G = E / (2 * (1 + nu))
 c1 = G / 2.0
 for i in range(len(stretch_vec)):
@@ -251,10 +255,14 @@ stress_ana = np.array(stress_ana)
 
 # plot results
 f = plt.figure(figsize=(12, 6))
-plt.plot(stretch_vec, stress_vec, 'r-')
+plt.plot(stretch_vec, cauchy_stress, 'r-')
+plt.xlabel("stretch")
+plt.ylabel("cauchy stress")
 plt.savefig('test1.png')
-plt.plot(stretch_vec, stress_ana, 'k.')
-plt.savefig('test2.png')
+# plt.plot(stretch_vec, stress_ana, 'k.')
+# plt.xlabel("stretch")
+# plt.ylabel("PK2")
+# plt.savefig('test2.png')
 
 file = File(output_dir + "displacements.pvd")
 file << u_plot
