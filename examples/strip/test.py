@@ -126,8 +126,8 @@ ds = ds(degree=4)
 
 
 # Create function space
-element_v = VectorElement("P", mesh.ufl_cell(), 1)
-element_s = FiniteElement("P", mesh.ufl_cell(), 1)
+element_v = VectorElement("CG", mesh.ufl_cell(), 2)
+element_s = FiniteElement("DG", mesh.ufl_cell(), 0)
 mixed_element = MixedElement([element_v, element_s])
 V = FunctionSpace(mesh, mixed_element)
 
@@ -141,7 +141,7 @@ u, p = split(_u_p)
 
 
 # Create tensor function spaces for stress and stretch output
-W_DFnStress = TensorFunctionSpace(mesh, "DG", degree=0)
+W_DFnStress = TensorFunctionSpace(mesh, "DG", degree=1)
 defGrad = Function(W_DFnStress, name='F')
 PK1_stress = Function(W_DFnStress, name='PK1')
 C_stress = Function(W_DFnStress, name='Cauchy')
@@ -226,15 +226,15 @@ while t <= T:
     # get stress at a point for plotting
     PK1_s, thydpress, C_s = pk2Stress(
         u_plot, p_plot, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
-    PK1_stress.assign(project(PK1_s, W_DFnStress))
+    # PK1_stress.assign(project(PK1_s, W_DFnStress))
     C_stress.assign(project(C_s, W_DFnStress))
-    stress_vec.append(PK1_stress(point)[0])
+    # stress_vec.append(PK1_stress(point)[0])
     cauchy_stress.append(C_stress(point)[0])
 
     # save xdmf file
     file_results.write(u_plot, t)
     file_results.write(defGrad, t)
-    file_results.write(PK1_stress, t)
+    # file_results.write(PK1_stress, t)
 
     # time increment
     t += float(dt)
@@ -242,16 +242,16 @@ while t <= T:
 
 # get analytical solution
 stretch_vec = np.array(stretch_vec)
-stress_vec = np.array(stress_vec)
+# stress_vec = np.array(stress_vec)
 cauchy_stress = np.array(cauchy_stress)
-G = E / (2 * (1 + nu))
-c1 = G / 2.0
-for i in range(len(stretch_vec)):
-    pk1_ana = 2 * c1 * (stretch_vec[i] - 1 /
-                        (stretch_vec[i] * stretch_vec[i]))  # PK1
-    pk2_ana = (1 / stretch_vec[i]) * pk1_ana  # PK2
-    stress_ana.append(pk2_ana)
-stress_ana = np.array(stress_ana)
+# G = E / (2 * (1 + nu))
+# c1 = G / 2.0
+# for i in range(len(stretch_vec)):
+#     pk1_ana = 2 * c1 * (stretch_vec[i] - 1 /
+#                         (stretch_vec[i] * stretch_vec[i]))  # PK1
+#     pk2_ana = (1 / stretch_vec[i]) * pk1_ana  # PK2
+#     stress_ana.append(pk2_ana)
+# stress_ana = np.array(stress_ana)
 
 # plot results
 f = plt.figure(figsize=(12, 6))
