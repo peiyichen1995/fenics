@@ -15,7 +15,7 @@ from ufl.operators import cell_avg
 ufl.algorithms.apply_derivatives.CONDITIONAL_WORKAROUND = True
 
 
-def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F, Q):
+def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F):
     J = det(F)
     C = F.T * F
     temp1 = mu1 * tr(C) / pow(J, 2 / 3)
@@ -35,7 +35,6 @@ def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F, Q):
 def h_prime(delta, beta3):
     return beta3 * pow(delta, beta3 - 1) - beta3 * pow(delta, -beta3 - 1)
 
-
     # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
 parameters["form_compiler"]["quadrature_degree"] = 2
@@ -54,13 +53,8 @@ n = FacetNormal(mesh)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
-VV = VectorFunctionSpace(mesh, 'CG', 2)
-VVV = TensorFunctionSpace(mesh, 'DG', 1)
-Q = FunctionSpace(mesh, "CG", 1)
-# W = VV * Q
-# P1 = FiniteElement("CG", mesh.ufl_cell(), 2)
-# R = FiniteElement("CG", mesh.ufl_cell(), 1)
-# W = FunctionSpace(mesh, P1 * R)
+VV = VectorFunctionSpace(mesh, 'DG', 0)
+# VVV = TensorFunctionSpace(mesh, 'DG', 1)
 
 
 # Mark boundary subdomians
@@ -69,19 +63,18 @@ right = CompiledSubDomain("near(x[0], side) && on_boundary", side=10.0)
 
 # Define Dirichlet boundary (x = 0 or x = 1)
 l = Expression(('0', '0', '0.0'), element=VV.ufl_element())
-# r = Expression(('1', '0', '0'), element=VV.ufl_element())
-r = Constant(0.5)
+r = Constant(5.0)
 
-bc_r = DirichletBC(VV.sub(0), r, right)
 bc_l = DirichletBC(VV, l, left)
+bc_r = DirichletBC(VV.sub(0), r, right)
+
 bcs = [bc_r, bc_l]
 
 # Define functions
 v = TestFunction(VV)             # Test function
 u = Function(VV)                 # Displacement from previous iteration
-u = TrialFunction(VV)
-# (u, p) = TrialFunctions(W)
-# (v, q) = TestFunctions(W)
+du = TrialFunction(VV)            # Incremental displacement
+
 phi1 = Function(V)
 phi2 = Function(V)
 
@@ -134,19 +127,24 @@ P = Constant(0.0)
 
 # Total potential energy
 psi = NeoHookean_imcompressible(
-    mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F, V)
+    mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F)
 
 L = inner(P * det(F) * inv(F.T) * n, v) * ds
 theta_bar = cell_avg(det(F))
-a = theta_bar * dx
-A = assemble(a)
+# a = theta_bar * dx
+# A = assemble(a)
 p_bar = cell_avg(g3 * h_prime(theta_bar, beta3))
+# a = p_bar * dx
+# A = Constant(assemble(p_bar * dx))
 
-exit()
-delta_E = (F.T * grad(v) + grad(v).T * F) / 2
+delta_E = (grad(u).T * grad(v) + grad(v).T * grad(u)) / 2
+
 S_isc = 2.0 * diff(psi, C) - g3 * sqrt(det(F)) * \
     h_prime(sqrt(det(F)), beta3) * inv(C)
-a = inner(S_isc + det(F) * h_prime(det(F), beta3) * inv(C), delta_E) * dx
+
+
+# a = inner(S_isc + det(F) * h_prime(det(F), beta3) * inv(C), delta_E) * dx
+a = inner(S_isc + det(F) * p_bar * inv(C), delta_E)
 
 
 # A = 0 * inner(S_isc + det(F) * p_bar * inv(C), delta_E) * dx
@@ -157,14 +155,21 @@ a = inner(S_isc + det(F) * h_prime(det(F), beta3) * inv(C), delta_E) * dx
 #     a = cell.volume() * cell_avg(inner(S_isc + det(F) * p_bar * inv(C), delta_E))
 #     A += a
 
-exit()
 
-du = TrialFunction(VV)            # Incremental displacement
-F = a
+F = a - L
 J = derivative(F, u, du)
-problem = CustomProblem(J, F, bcs)
-solver = CustomSolver()
-solver.solve(problem, u.vector())
+# problem = CustomProblem(J, F, bcs)
+# solver = CustomSolver()
+# solver.solve(problem, u.vector())
+
+
+# Create nonlinear variational problem and solve
+problem = NonlinearVariationalProblem(F, u, bcs=bcs, J=J)
+solver = NonlinearVariationalSolver(problem)
+solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
+solver.parameters['newton_solver']['linear_solver'] = 'mumps'
+
+solver.solve()
 
 
 # solve(F == 0, u, bcs, J=J)
