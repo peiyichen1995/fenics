@@ -48,6 +48,8 @@ bc_right = DirichletBC(V, Constant(1.0), right)
 bcs_1 = [bc_top, bc_bottom]
 bcs_2 = [bc_left, bc_right]
 
+# dx = Measure('dx', mesh)
+
 # variational problem
 Pi = 0.5 * dot(grad(phi), grad(phi)) * dx
 dPi = derivative(Pi, phi, w)

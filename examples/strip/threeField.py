@@ -32,9 +32,12 @@ class Traction(UserExpression):
 def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F):
     J = det(F)
     C = F.T * F
-    temp1 = mu1 * tr(C) / pow(J, 2 / 3)
-    temp2 = mu2 * pow(sqrt(tr(matrix_cofactor(F).T *
-                              matrix_cofactor(F))), 3) / pow(J, 2)
+    C_bar = pow(J, -2 / 3) * C
+    # temp1 = mu1 * tr(C) / pow(J, 2 / 3)
+    temp1 = mu1 * tr(C_bar)
+    # temp2 = mu2 * pow(sqrt(tr(matrix_cofactor(F).T *
+    #                           matrix_cofactor(F))), 3) / pow(J, 2)
+    temp2 = mu2 * pow(tr(matrix_cofactor(C_bar)), 3 / 2)
     h = pow(J, beta3) + pow(J, -beta3)
     temp3 = mu3 * h
     temp4 = mu4 / beta4 * \
@@ -46,7 +49,7 @@ def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F):
     return temp1 + temp2 + temp3 + temp4 + temp5
 
 
-def pk2Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
+def PK1Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
 
     I = Identity(V.mesh().geometry().dim())  # Identity tensor
     F = I + grad(u)          # Deformation gradient
@@ -56,7 +59,6 @@ def pk2Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
     Ic = tr(C)               # Invariants of deformation tensors
     J = det(F)
     NH = NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F)
-    PK2 = 2.0 * diff(NH, C)
     PK1 = diff(NH, F)
     return PK1, (J - 1), (F.T * F)
 
@@ -132,20 +134,20 @@ ds = ds(degree=4)
 
 # Create function space
 element_v = VectorElement("CG", mesh.ufl_cell(), 2)
-element_s = FiniteElement("DG", mesh.ufl_cell(), 0)
+element_s = FiniteElement("CG", mesh.ufl_cell(), 1)
 # mixed_element = MixedElement([element_v, element_s, element_s])
-mixed_element = MixedElement([element_v, element_s])
+mixed_element = MixedElement([element_v, element_s, element_s])
 V = FunctionSpace(mesh, mixed_element)
 
 
 # Define test and trial functions
 dup = TrialFunction(V)
-# _u, _p, _q = TestFunctions(V)
-_u, _p = TestFunctions(V)
+_u, _p, _q = TestFunctions(V)
+# _u, _p = TestFunctions(V)
 
 _u_p = Function(V)
-# u, p, q = split(_u_p)
-u, p = split(_u_p)
+u, p, q = split(_u_p)
+# u, p = split(_u_p)
 
 
 # Create tensor function spaces for stress and stretch output
@@ -182,7 +184,7 @@ g3 = 9.7227
 P = Constant(0.0)
 
 # # Total potential energy
-pkstrs, hydpress, C_s = pk2Stress(
+pkstrs, hydpress, C_s = PK1Stress(
     u, p, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
 I = Identity(V.mesh().geometry().dim())
 dgF = I + grad(u)
@@ -191,18 +193,18 @@ C = variable(dgF.T * dgF)
 psi = NeoHookean_imcompressible(
     mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, dgF)
 
-S_isc = 2.0 * diff(psi, C) - g3 * sqrt(det(dgF)) * \
-    h_prime(sqrt(det(dgF)), beta3) * inv(C)
+S_isc = 2.0 * diff(psi, C) - g3 * sqrt(det(C)) * \
+    h_prime(sqrt(det(C)), beta3) * inv(C)
 
 delta_E = (grad(u).T * grad(_u) + grad(_u).T * grad(u)) / 2
 
 L = inner(P * det(dgF) * inv(dgF.T) * n, _u) * ds
 
 
-F1 = inner(S_isc + det(dgF) * p * inv(C), delta_E) * dx
-# F2 = (q - det(dgF)) * _q * dx
+F1 = inner(S_isc + det(dgF) * h_prime(det(dgF), beta3) * inv(C), delta_E) * dx
+F2 = (q - det(dgF)) * _q * dx
 F3 = (p - g3 * h_prime(det(dgF), beta3)) * _p * dx
-F = F1 + F3 - L
+F = F1 + F2 + F3 - L
 J = derivative(F, _u_p, dup)
 
 # Create nonlinear variational problem and solve
@@ -214,7 +216,7 @@ solver.parameters['newton_solver']['linear_solver'] = 'mumps'
 
 # Time stepping parameters
 dt = 0.1
-t, T = 0.0, 20 * dt
+t, T = 0.0, 2 * dt
 
 # Save solution in VTK format
 file_results = XDMFFile("./Results/TestUniaxialLoading/Uniaxial.xdmf")
@@ -237,9 +239,9 @@ while t <= T:
     solver.solve()
 
     # Extract solution components
-    u_plot, p_plot = _u_p.split()
-    u_plot.rename("u", "displacement")
-    p_plot.rename("p", "pressure")
+    # u_plot, p_plot = _u_p.split()
+    # u_plot.rename("u", "displacement")
+    # p_plot.rename("p", "pressure")
 
     # get stretch at a point for plotting
     point = (5, 1.5, 0)
@@ -248,7 +250,7 @@ while t <= T:
     stretch_vec.append(defGrad(point)[0])
 
     # get stress at a point for plotting
-    PK1_s, thydpress, C_s = pk2Stress(
+    PK1_s, thydpress, C_s = PK1Stress(
         u_plot, p_plot, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
     # PK1_stress.assign(project(PK1_s, W_DFnStress))
     C_stress.assign(project(C_s, W_DFnStress))
@@ -256,8 +258,8 @@ while t <= T:
     cauchy_stress.append(C_stress(point)[0])
 
     # save xdmf file
-    file_results.write(u_plot, t)
-    file_results.write(defGrad, t)
+    # file_results.write(u_plot, t)
+    # file_results.write(defGrad, t)
     # file_results.write(PK1_stress, t)
 
     # time increment

@@ -53,7 +53,7 @@ n = FacetNormal(mesh)
 
 # function space
 V = FunctionSpace(mesh, 'CG', 2)
-VV = VectorFunctionSpace(mesh, 'DG', 0)
+VV = VectorFunctionSpace(mesh, 'CG', 2)
 # VVV = TensorFunctionSpace(mesh, 'DG', 1)
 
 
@@ -144,7 +144,7 @@ S_isc = 2.0 * diff(psi, C) - g3 * sqrt(det(F)) * \
 
 
 # a = inner(S_isc + det(F) * h_prime(det(F), beta3) * inv(C), delta_E) * dx
-a = inner(S_isc + det(F) * p_bar * inv(C), delta_E)
+a = inner(S_isc + det(F) * p_bar * inv(C), delta_E) * dx
 
 
 # A = 0 * inner(S_isc + det(F) * p_bar * inv(C), delta_E) * dx
