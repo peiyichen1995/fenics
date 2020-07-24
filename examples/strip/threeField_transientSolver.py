@@ -107,34 +107,35 @@ print('Number of cells: ', mesh.num_cells())
 
 # ===============================================
 
-V = FunctionSpace(mesh, 'CG', 2)
-phi1 = Function(V)
-phi2 = Function(V)
+# V = FunctionSpace(mesh, 'CG', 2)
+# phi1 = Function(V)
+# phi2 = Function(V)
 
 # read in laplace solutions
-phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
-phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "r")
-phi1_h5.read(phi1, "phi1")
-phi2_h5.read(phi2, "phi2")
-phi1_h5.close()
-phi2_h5.close()
+# phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
+# phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "r")
+# phi1_h5.read(phi1, "phi1")
+# phi2_h5.read(phi2, "phi2")
+# phi1_h5.close()
+# phi2_h5.close()
 
 # define orthorgonal basis
-e3 = grad(phi1)
-e1 = grad(phi2)
-e2 = my_cross(e3, e1)
+# e3 = grad(phi1)
+# e1 = grad(phi2)
+# e2 = my_cross(e3, e1)
 
-# normalize basis
-e1 = e1 / sqrt(inner(e1, e1))
-e2 = e2 / sqrt(inner(e2, e2))
-e3 = e3 / sqrt(inner(e3, e3))
+# # normalize basis
+# e1 = e1 / sqrt(inner(e1, e1))
+# e2 = e2 / sqrt(inner(e2, e2))
+# e3 = e3 / sqrt(inner(e3, e3))
 
 # define tissue orientation on the spatial varying basis
 theta = math.pi / 3
-a1 = math.cos(theta) * e3 + math.sin(theta) * e2
-a2 = math.cos(theta) * e3 - math.sin(theta) * e2
+# a1 = math.cos(theta) * e3 + math.sin(theta) * e2
+# a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
-
+a1 = as_vector([cos(theta), -sin(theta), 0])
+a2 = as_vector([cos(theta), sin(theta), 0])
 # ===============================================
 
 
@@ -156,6 +157,16 @@ assign(d, d0)
 
 u, p, d = split(w)
 
+# initial guess
+w_n = Function(W)
+u_n, p_n, d_n = w_n.split()
+
+d0e_n = Expression('1', degree=1)
+d0_n = interpolate(d0e_n, W.sub(2).collapse())
+assign(d_n, d0_n)
+
+u_n, p_n, d_n = split(w_n)
+
 # Displacement from previous iteration
 b = Constant((0.0, 0.0, 0.0))  # Body force per unit mass
 h = Traction()  # Traction force on the boundary
@@ -166,7 +177,7 @@ bc0 = DirichletBC(W.sub(0).sub(0), Constant(0.), facet_function, 1)
 bc1 = DirichletBC(W.sub(0).sub(1), Constant(0.), facet_function, 2)
 bc2 = DirichletBC(W.sub(0).sub(2), Constant(0.), facet_function, 3)
 
-tDirBC = Expression(('2.0*time_'), time_=0.1, degree=0)
+tDirBC = Expression(('2.5*time_'), time_=0.1, degree=0)
 bc3 = DirichletBC(W.sub(0).sub(0), tDirBC, facet_function, 4)
 bcs = [bc0, bc1, bc2, bc3]
 
@@ -187,6 +198,11 @@ J = det(F)
 C = F.T * F
 C_bar = pow(J, -2 / 3) * C
 
+F_n = grad(u_n) + Identity(3)
+J_n = det(F_n)
+C_n = F_n.T * F_n
+C_bar_n = pow(J_n, -2 / 3) * C_n
+# =============================================
 # C1 = Constant(2.5)
 # lmbda = Constant(30.0)
 
@@ -199,10 +215,79 @@ psi_ti = mu4 / beta4 * \
     exp(beta4 * pow(conditional(gt(inner(F * a2, F * a2), 1),
                                 inner(F * a2, F * a2) - 1, 0), 2))
 psi_theta = g3 * (pow(J, beta3) + pow(J, -beta3))
-psi = psi_bar + psi_ti + psi_theta
-R = derivative(psi * dx, w, TestFunction(W))
+
+psi = psi_bar + psi_theta + psi_ti
+
+# ======================================
+psi_bar_n = mu1 * tr(C_bar_n) + mu2 * pow(tr(matrix_cofactor(C_bar_n)), 3 / 2)
+psi_ti_n = mu4 / beta4 * \
+    exp(beta4 * pow(conditional(gt(inner(F_n * a1, F_n * a1), 1),
+                                inner(F_n * a1, F_n * a1) - 1, 0), 2)) + mu4 / beta4 * \
+    exp(beta4 * pow(conditional(gt(inner(F_n * a2, F_n * a2), 1),
+                                inner(F_n * a2, F_n * a2) - 1, 0), 2))
+psi_theta_n = g3 * (pow(J_n, beta3) + pow(J_n, -beta3))
+
+psi_n = psi_bar_n + psi_theta_n + psi_ti_n
+
+R_n = derivative((psi_n) * dx, w_n, TestFunction(W))
+J_form_n = derivative(R_n, w_n, TrialFunction(W))
+
+# Create nonlinear variational problem and solve
+problem_n = NonlinearVariationalProblem(R_n, w_n, bcs=bcs, J=J_form_n)
+solver_n = NonlinearVariationalSolver(problem_n)
+solver_n.parameters['newton_solver']['relative_tolerance'] = 1e-6
+solver_n.parameters['newton_solver']['linear_solver'] = 'mumps'
+
+solver_n.solve()
+exit()
+# ======================================
+
+R = derivative((psi - psi_n) * dx, w, TestFunction(W))
 J_form = derivative(R, w, TrialFunction(W))
 
-solve(R == 0, w, bcs,
-      form_compiler_parameters={"keep_diagonal": True})
-# plot(split(w)[0], interactive=True, mode="displacement")
+# solve(R == 0, w, bcs,
+#       form_compiler_parameters={"keep_diagonal": True})
+#
+# exit()
+
+# Create nonlinear variational problem and solve
+problem = NonlinearVariationalProblem(R, w, bcs=bcs, J=J_form)
+solver = NonlinearVariationalSolver(problem)
+solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
+solver.parameters['newton_solver']['linear_solver'] = 'mumps'
+
+# solver.solve()
+
+# Time stepping parameters
+dt = 0.2
+t, T = 0.1, 10 * dt
+
+# Save solution in VTK format
+file_results = XDMFFile("./Results/TestUniaxialLoading/Uniaxial.xdmf")
+file_results.parameters["flush_output"] = True
+file_results.parameters["functions_share_mesh"] = True
+
+
+while t <= T:
+    print('time: ', t)
+
+    # Increase traction
+    h.t = t
+    tDirBC.time_ = t
+
+    # solve and save disp
+    solver.solve()
+
+    # Save solution
+    u_solu, p_solu, d_solu = w.split()
+    file = File(output_dir + "theta_step" + str(t) + ".pvd")
+    file << d_solu
+
+    # time increment
+    t += float(dt)
+
+    assign(w_n, w)
+
+u_plot = w.split()
+file = File(output_dir + "displacements.pvd")
+file << u_plot

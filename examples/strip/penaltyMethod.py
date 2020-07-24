@@ -7,6 +7,13 @@ import math
 
 from utils import my_cross, matrix_cofactor
 
+# Optimization options for the form compiler
+parameters["form_compiler"]["cpp_optimize"] = True
+parameters["form_compiler"]["quadrature_degree"] = 2
+ffc_options = {"optimize": True,
+               "eliminate_zeros": True,
+               "precompute_basis_const": True,
+               "precompute_ip_const": True}
 
 parameters["form_compiler"]["cpp_optimize"] = True
 parameters["form_compiler"]["representation"] = "uflacs"
@@ -46,7 +53,7 @@ def NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F):
     return temp1 + temp2 + temp3 + temp4 + temp5
 
 
-def pk2Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
+def PK1Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
 
     I = Identity(V.mesh().geometry().dim())  # Identity tensor
     F = I + grad(u)          # Deformation gradient
@@ -56,13 +63,14 @@ def pk2Stress(u, pressure, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2):
     Ic = tr(C)               # Invariants of deformation tensors
     J = det(F)
     NH = NeoHookean_imcompressible(mu1, mu2, mu3, mu4, beta3, beta4, a1, a2, F)
-    PK2 = 2.0 * diff(NH, C)
+
     PK1 = diff(NH, F)
     return PK1, (J - 1), (F.T * F)
 
 
 def geometry_3d(mesh_dir):
-    mesh = Mesh(mesh_dir)
+    # mesh = Mesh(mesh_dir)
+    mesh = BoxMesh(Point(0.0, 0.0, 0.0), Point(10., 3, 0.5), 5, 5, 5)
 
     boundary_parts = MeshFunction('size_t', mesh, mesh.topology().dim() - 1)
     x0 = AutoSubDomain(lambda x: near(x[0], 0))
@@ -89,40 +97,45 @@ print('Number of nodes: ', mesh.num_vertices())
 print('Number of cells: ', mesh.num_cells())
 
 # ===============================================
-
-V = FunctionSpace(mesh, 'CG', 2)
-phi1 = Function(V)
-phi2 = Function(V)
-
-# read in laplace solutions
-phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
-phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "r")
-phi1_h5.read(phi1, "phi1")
-phi2_h5.read(phi2, "phi2")
-phi1_h5.close()
-phi2_h5.close()
-
-# define orthorgonal basis
-e3 = grad(phi1)
-e1 = grad(phi2)
-e2 = my_cross(e3, e1)
-
-# normalize basis
-e1 = e1 / sqrt(inner(e1, e1))
-e2 = e2 / sqrt(inner(e2, e2))
-e3 = e3 / sqrt(inner(e3, e3))
+#
+# V = FunctionSpace(mesh, 'CG', 2)
+# phi1 = Function(V)
+# phi2 = Function(V)
+#
+# # read in laplace solutions
+# phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
+# phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "r")
+# phi1_h5.read(phi1, "phi1")
+# phi2_h5.read(phi2, "phi2")
+# phi1_h5.close()
+# phi2_h5.close()
+#
+# # define orthorgonal basis
+# e3 = grad(phi1)
+# e1 = grad(phi2)
+# e2 = my_cross(e3, e1)
+#
+# # normalize basis
+# e1 = e1 / sqrt(inner(e1, e1))
+# e2 = e2 / sqrt(inner(e2, e2))
+# e3 = e3 / sqrt(inner(e3, e3))
+#
+# # define tissue orientation on the spatial varying basis
+# theta = math.pi / 3
+# a1 = math.cos(theta) * e3 + math.sin(theta) * e2
+# a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
 # define tissue orientation on the spatial varying basis
 theta = math.pi / 3
-a1 = math.cos(theta) * e3 + math.sin(theta) * e2
-a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
+a1 = as_vector([cos(theta), -sin(theta), 0])
+a2 = as_vector([cos(theta), sin(theta), 0])
 
 # ===============================================
 
-# Limit quadrature degree
-dx = dx(degree=4)
-ds = ds(degree=4)
+# # Limit quadrature degree
+# dx = dx(degree=4)
+# ds = ds(degree=4)
 
 
 # Create function space
@@ -153,15 +166,14 @@ h = Traction()  # Traction force on the boundary
 
 # Define Dirichlet boundary
 bc0 = DirichletBC(V.sub(0).sub(0), Constant(0.), facet_function, 1)
-bc1 = DirichletBC(V.sub(0).sub(1), Constant(0.), facet_function, 2)
-bc2 = DirichletBC(V.sub(0).sub(2), Constant(0.), facet_function, 3)
+bc1 = DirichletBC(V.sub(0).sub(1), Constant(0.), facet_function, 1)
+bc2 = DirichletBC(V.sub(0).sub(2), Constant(0.), facet_function, 1)
 
-tDirBC = Expression(('2.0*time_'), time_=0.0, degree=0)
+tDirBC = Expression(('4.5*time_'), time_=0.0, degree=0)
 bc3 = DirichletBC(V.sub(0).sub(0), tDirBC, facet_function, 4)
 bcs = [bc0, bc1, bc2, bc3]
 
 # material parameters
-E, nu = 1e3, 0.5
 mu1 = 4.1543
 mu2 = 2.5084
 mu3 = 9.7227
@@ -171,7 +183,7 @@ beta4 = 500.02
 g3 = 9.7227
 
 # # Total potential energy
-pkstrs, hydpress, C_s = pk2Stress(
+pkstrs, hydpress, C_s = PK1Stress(
     u, p, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
 I = Identity(V.mesh().geometry().dim())
 dgF = I + grad(u)
@@ -224,10 +236,11 @@ while t <= T:
     stretch_vec.append(defGrad(point)[0])
 
     # get stress at a point for plotting
-    PK1_s, thydpress, C_s = pk2Stress(
+    PK1_s, thydpress, C_s = PK1Stress(
         u_plot, p_plot, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
     # PK1_stress.assign(project(PK1_s, W_DFnStress))
-    C_stress.assign(project(C_s, W_DFnStress))
+    C_stress.assign(
+        project(1 / det(DF) * (PK1_s - p_plot * inv(DF).T) * DF.T, W_DFnStress))
     # stress_vec.append(PK1_stress(point)[0])
     cauchy_stress.append(C_stress(point)[0])
 
@@ -244,25 +257,18 @@ while t <= T:
 stretch_vec = np.array(stretch_vec)
 # stress_vec = np.array(stress_vec)
 cauchy_stress = np.array(cauchy_stress)
-# G = E / (2 * (1 + nu))
-# c1 = G / 2.0
-# for i in range(len(stretch_vec)):
-#     pk1_ana = 2 * c1 * (stretch_vec[i] - 1 /
-#                         (stretch_vec[i] * stretch_vec[i]))  # PK1
-#     pk2_ana = (1 / stretch_vec[i]) * pk1_ana  # PK2
-#     stress_ana.append(pk2_ana)
-# stress_ana = np.array(stress_ana)
+
 
 # plot results
 f = plt.figure(figsize=(12, 6))
 plt.plot(stretch_vec, cauchy_stress, 'r-')
 plt.xlabel("stretch")
 plt.ylabel("cauchy stress")
-plt.savefig('test1.png')
+plt.savefig('penaltyCauchyStress.png')
 # plt.plot(stretch_vec, stress_ana, 'k.')
 # plt.xlabel("stretch")
 # plt.ylabel("PK2")
 # plt.savefig('test2.png')
 
-file = File(output_dir + "displacements.pvd")
+file = File(output_dir + "penaltyDisplacements.pvd")
 file << u_plot
