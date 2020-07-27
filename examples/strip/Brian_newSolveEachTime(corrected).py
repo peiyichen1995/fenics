@@ -36,7 +36,7 @@ class Traction(UserExpression):
 
 def geometry_3d(mesh_dir):
     # mesh = Mesh(mesh_dir)
-    mesh = BoxMesh(Point(0.0, 0.0, 0.0), Point(10., 3, 0.5), 20, 6, 5)
+    mesh = BoxMesh(Point(0.0, 0.0, 0.0), Point(10., 3, 0.5), 5, 5, 5)
 
     boundary_parts = MeshFunction('size_t', mesh, mesh.topology().dim() - 1)
     x0 = AutoSubDomain(lambda x: near(x[0], 0))
@@ -78,10 +78,10 @@ print('Number of nodes: ', mesh.num_vertices())
 print('Number of cells: ', mesh.num_cells())
 
 # define tissue orientation on the spatial varying basis
-theta = math.pi / 3
+theta = 46.274 / 180 * math.pi
 
-a1 = as_vector([cos(theta), -sin(theta), 0])
-a2 = as_vector([cos(theta), sin(theta), 0])
+a1 = as_vector([cos(theta), sin(theta), 0])
+a2 = as_vector([cos(theta), -sin(theta), 0])
 # ===============================================
 
 
@@ -156,7 +156,7 @@ J_form = derivative(R, w, TrialFunction(W))
 
 # Time stepping parameters
 dt = 0.1
-t, T = 0.0, 30 * dt
+t, T = 0.0, 10 * dt
 
 # Save solution in VTK format
 file_results = XDMFFile("./Results/TestUniaxialLoading/Uniaxial.xdmf")
@@ -189,7 +189,7 @@ while t <= T:
     file << u_sol
 
     # get stretch at a point for plotting
-    point = (0, 0, 0)
+    point = (10, 1.5, 0)
     defGrad.assign(project(I + grad(u_sol), W_DFnStress))
     stretch_vec.append(defGrad(point)[0])
     print("stretch = " + str(defGrad(point)[0]))
