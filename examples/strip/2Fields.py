@@ -1,4 +1,5 @@
 
+import time
 from dolfin import *
 import matplotlib.pyplot as plt
 import os
@@ -96,46 +97,19 @@ ds = Measure("ds", subdomain_data=facet_function, subdomain_id=4)
 print('Number of nodes: ', mesh.num_vertices())
 print('Number of cells: ', mesh.num_cells())
 
-# ===============================================
-#
-# V = FunctionSpace(mesh, 'CG', 2)
-# phi1 = Function(V)
-# phi2 = Function(V)
-#
-# # read in laplace solutions
-# phi1_h5 = HDF5File(MPI.comm_world, output_dir + "phi1.h5", "r")
-# phi2_h5 = HDF5File(MPI.comm_world, output_dir + "phi2.h5", "r")
-# phi1_h5.read(phi1, "phi1")
-# phi2_h5.read(phi2, "phi2")
-# phi1_h5.close()
-# phi2_h5.close()
-#
-# # define orthorgonal basis
-# e3 = grad(phi1)
-# e1 = grad(phi2)
-# e2 = my_cross(e3, e1)
-#
-# # normalize basis
-# e1 = e1 / sqrt(inner(e1, e1))
-# e2 = e2 / sqrt(inner(e2, e2))
-# e3 = e3 / sqrt(inner(e3, e3))
-#
-# # define tissue orientation on the spatial varying basis
-# theta = math.pi / 3
-# a1 = math.cos(theta) * e3 + math.sin(theta) * e2
-# a2 = math.cos(theta) * e3 - math.sin(theta) * e2
 
 # define tissue orientation on the spatial varying basis
-theta = math.pi / 3
+# theta = math.pi / 3
+#
+# a1 = as_vector([cos(theta), sin(theta), 0])
+# a2 = as_vector([cos(theta), -sin(theta), 0])
 
-a1 = as_vector([cos(theta), -sin(theta), 0])
-a2 = as_vector([cos(theta), sin(theta), 0])
+theta = 46.274 / 180 * math.pi
+
+a1 = as_vector([cos(theta), sin(theta), 0])
+a2 = as_vector([cos(theta), -sin(theta), 0])
 
 # ===============================================
-
-# # Limit quadrature degree
-# dx = dx(degree=4)
-# ds = ds(degree=4)
 
 
 # Create function space
@@ -169,7 +143,7 @@ bc0 = DirichletBC(V.sub(0).sub(0), Constant(0.), facet_function, 1)
 bc1 = DirichletBC(V.sub(0).sub(1), Constant(0.), facet_function, 1)
 bc2 = DirichletBC(V.sub(0).sub(2), Constant(0.), facet_function, 1)
 
-tDirBC = Expression(('4.5*time_'), time_=0.0, degree=0)
+tDirBC = Expression(('3*time_'), time_=0.0, degree=0)
 bc3 = DirichletBC(V.sub(0).sub(0), tDirBC, facet_function, 4)
 bcs = [bc0, bc1, bc2, bc3]
 
@@ -187,8 +161,7 @@ pkstrs, hydpress, C_s = PK1Stress(
     u, p, mu1, mu2, mu3, mu4, beta3, beta4, a1, a2)
 I = Identity(V.mesh().geometry().dim())
 dgF = I + grad(u)
-F1 = inner(pkstrs - p * inv(dgF).T, grad(_u)) * \
-    dx - dot(b, _u) * dx - dot(h, _u) * ds
+F1 = inner(pkstrs - p * inv(dgF).T, grad(_u)) * dx
 F2 = hydpress * _p * dx
 F = F1 + F2
 J = derivative(F, _u_p, dup)
@@ -200,8 +173,10 @@ solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
 solver.parameters['newton_solver']['linear_solver'] = 'mumps'
 
 
+start_time = time.time()
+
 # Time stepping parameters
-dt = 0.1
+dt = 0.05
 t, T = 0.0, 20 * dt
 
 # Save solution in VTK format
@@ -218,7 +193,6 @@ while t <= T:
     print('time: ', t)
 
     # Increase traction
-    h.t = t
     tDirBC.time_ = t
 
     # solve and save disp
@@ -230,7 +204,7 @@ while t <= T:
     p_plot.rename("p", "pressure")
 
     # get stretch at a point for plotting
-    point = (5, 1.5, 0)
+    point = (5, 1.5, 0.25)
     DF = I + grad(u_plot)
     defGrad.assign(project(DF, W_DFnStress))
     stretch_vec.append(defGrad(point)[0])
@@ -251,7 +225,10 @@ while t <= T:
 
     # time increment
     t += float(dt)
-
+print("dofs: ")
+print(assemble(J).size(0))
+print("time: ")
+print(time.time() - start_time)
 
 # get analytical solution
 stretch_vec = np.array(stretch_vec)
@@ -272,3 +249,6 @@ plt.savefig('penaltyCauchyStress.png')
 
 file = File(output_dir + "penaltyDisplacements.pvd")
 file << u_plot
+
+for i in range(len(stretch_vec)):
+    print(str(1 + 0.015 * i) + "," + str(cauchy_stress[i]))

@@ -1,4 +1,5 @@
 # system imports
+import time
 from dolfin import *
 import matplotlib.pyplot as plt
 import os
@@ -60,7 +61,7 @@ def cauchy(mu1, mu2, mu4, g3, beta3, beta4, a1, a2, F, p, theta):
         exp(beta4 * pow(conditional(gt(inner(F * a2, F * a2), 1),
                                     inner(F * a2, F * a2) - 1, 0), 2))
     psi_theta = g3 * (pow(theta, beta3) + pow(theta, -beta3))
-    psi = psi_bar + psi_theta + psi_ti + p * (J - theta)
+    psi = psi_bar + psi_theta + psi_ti
     PK1 = diff(psi, F)
     return PK1 * F.T / J
 
@@ -86,7 +87,7 @@ a2 = as_vector([cos(theta), -sin(theta), 0])
 
 
 V = VectorElement("CG", mesh.ufl_cell(), 2)
-Q = FiniteElement("CG", mesh.ufl_cell(), 1)
+Q = FiniteElement("DG", mesh.ufl_cell(), 0)
 mixed_element = MixedElement([V, Q, Q])
 W = FunctionSpace(mesh, mixed_element)
 
@@ -118,6 +119,8 @@ bc_fixed = DirichletBC(W.sub(0), Constant((0.0, 0.0, 0.0)), facet_function, 1)
 
 tDirBC = Expression(('3*time_'), time_=0.0, degree=0)
 bc_dispaced = DirichletBC(W.sub(0).sub(0), tDirBC, facet_function, 2)
+# bc_fixed_top_y = DirichletBC(W.sub(0).sub(1), Constant(0.), facet_function, 2)
+# bc_fixed_top_z = DirichletBC(W.sub(0).sub(2), Constant(0.), facet_function, 2)
 bcs = [bc_fixed, bc_dispaced]
 
 # material parameters
@@ -154,9 +157,11 @@ J_form = derivative(R, w, TrialFunction(W))
 #       form_compiler_parameters={"keep_diagonal": True})
 
 
+start_time = time.time()
+
 # Time stepping parameters
-dt = 0.1
-t, T = 0.0, 10 * dt
+dt = 0.05
+t, T = 0.0, 20 * dt
 
 # Save solution in VTK format
 file_results = XDMFFile("./Results/TestUniaxialLoading/Uniaxial.xdmf")
@@ -166,11 +171,16 @@ file_results.parameters["functions_share_mesh"] = True
 stretch_vec = []
 cauchy_stress = []
 
+
+print("dofs: ")
+
+print(assemble(J_form).size(0))
+
 while t <= T:
     print('time: ', t)
 
     # Increase traction
-    h.t = t
+    # h.t = t
     tDirBC.time_ = t
 
     # solve and save disp
@@ -189,7 +199,7 @@ while t <= T:
     file << u_sol
 
     # get stretch at a point for plotting
-    point = (10, 1.5, 0)
+    point = (5, 1.5, 0.25)
     defGrad.assign(project(I + grad(u_sol), W_DFnStress))
     stretch_vec.append(defGrad(point)[0])
     print("stretch = " + str(defGrad(point)[0]))
@@ -203,14 +213,21 @@ while t <= T:
     # time increment
     t += float(dt)
 
+
+print("time: ")
+print(time.time() - start_time)
+
 # get analytical solution
 stretch_vec = np.array(stretch_vec)
 # stress_vec = np.array(stress_vec)
 cauchy_stress = np.array(cauchy_stress)
 
 # plot results
-f = plt.figure(figsize=(12, 6))
+f = plt.figure(figsize=(6, 6))
 plt.plot(stretch_vec, cauchy_stress, 'r-')
 plt.xlabel("stretch")
 plt.ylabel("cauchy stress")
 plt.savefig('threeField.png')
+
+for i in range(len(stretch_vec)):
+    print(str(1 + 0.015 * i) + "," + str(cauchy_stress[i]))
