@@ -11,6 +11,7 @@ from utils import my_cross
 from utils import build_nullspace
 from utils import XDMF2PVD
 from utils import my_cross, matrix_cofactor
+from utils import build_nullspace_three_field
 
 # Optimization options for the form compiler
 parameters["form_compiler"]["cpp_optimize"] = True
