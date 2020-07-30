@@ -11,7 +11,7 @@ class SolverWithNullSpace(NewtonSolver):
         as_backend_type(A).set_nullspace(problem.null_space)
 
         PETScOptions.set("ksp_type", "gmres")
-        # PETScOptions.set("ksp_monitor")
+        PETScOptions.set("ksp_monitor")
         PETScOptions.set("ksp_max_it", 1000)
         PETScOptions.set("ksp_gmres_restart", 1000)
         # # PETScOptions.set("ksp_type", "preonly")
