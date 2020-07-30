@@ -14,11 +14,5 @@
     </PPointData>
     <Piece Source="_p0_000000.vtu" />
     <Piece Source="_p1_000000.vtu" />
-    <Piece Source="_p2_000000.vtu" />
-    <Piece Source="_p3_000000.vtu" />
-    <Piece Source="_p4_000000.vtu" />
-    <Piece Source="_p5_000000.vtu" />
-    <Piece Source="_p6_000000.vtu" />
-    <Piece Source="_p7_000000.vtu" />
   </PUnstructuredGrid>
 </VTKFile>

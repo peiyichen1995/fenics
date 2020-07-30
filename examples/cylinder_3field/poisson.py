@@ -42,7 +42,7 @@ ds = Measure('ds', domain=mesh, subdomain_data=boundaries)
 # function space
 V_phi = FunctionSpace(mesh, 'CG', 2)
 V = VectorElement("CG", mesh.ufl_cell(), 2)
-Q = FiniteElement("DG", mesh.ufl_cell(), 0)
+Q = FiniteElement("DG", mesh.ufl_cell(), 1)
 mixed_element = MixedElement([V, Q, Q])
 W = FunctionSpace(mesh, mixed_element)
 
@@ -123,9 +123,15 @@ if rank == 0:
     start_time = time.time()
 # solve(R == 0, w, [], J=J_form,
 #       form_compiler_parameters={"keep_diagonal": True})
+
 problem = ProblemWithNullSpace(J_form, R, [], null_space)
 solver = SolverWithNullSpace()
 solver.solve(problem, w.vector())
+
+# problem = CustomProblem(J_form, R, [])
+# solver = CustomSolver()
+# solver.solve(problem, w.vector())
+
 if rank == 0:
     end_time = time.time()
     print("solved using {0} seconds".format(end_time - start_time))
