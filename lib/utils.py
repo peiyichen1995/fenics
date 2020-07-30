@@ -26,6 +26,25 @@ def build_nullspace(V):
     return basis
 
 
+def build_nullspace_three_field(V, i):
+    x = Function(V).vector()
+    nullspace_basis = [x.copy() for i in range(6)]
+    V.sub(i).sub(0).dofmap().set(nullspace_basis[0], 1.0)
+    V.sub(i).sub(1).dofmap().set(nullspace_basis[1], 1.0)
+    V.sub(i).sub(2).dofmap().set(nullspace_basis[2], 1.0)
+    V.sub(i).sub(0).set_x(nullspace_basis[3], -1.0, 1)
+    V.sub(i).sub(1).set_x(nullspace_basis[3],  1.0, 0)
+    V.sub(i).sub(0).set_x(nullspace_basis[4],  1.0, 2)
+    V.sub(i).sub(2).set_x(nullspace_basis[4], -1.0, 0)
+    V.sub(i).sub(1).set_x(nullspace_basis[5], -1.0, 2)
+    V.sub(i).sub(2).set_x(nullspace_basis[5],  1.0, 1)
+    for x in nullspace_basis:
+        x.apply("insert")
+    basis = VectorSpaceBasis(nullspace_basis)
+    basis.orthonormalize()
+    return basis
+
+
 def matrix_cofactor(matrix):
     return det(matrix) * inv(matrix)
 
