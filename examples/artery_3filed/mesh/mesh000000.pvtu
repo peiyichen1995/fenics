@@ -13,9 +13,5 @@
     <Piece Source="mesh_p1_000000.vtu" />
     <Piece Source="mesh_p2_000000.vtu" />
     <Piece Source="mesh_p3_000000.vtu" />
-    <Piece Source="mesh_p4_000000.vtu" />
-    <Piece Source="mesh_p5_000000.vtu" />
-    <Piece Source="mesh_p6_000000.vtu" />
-    <Piece Source="mesh_p7_000000.vtu" />
   </PUnstructuredGrid>
 </VTKFile>

@@ -16,9 +16,5 @@
     <Piece Source="mf_p1_000000.vtu" />
     <Piece Source="mf_p2_000000.vtu" />
     <Piece Source="mf_p3_000000.vtu" />
-    <Piece Source="mf_p4_000000.vtu" />
-    <Piece Source="mf_p5_000000.vtu" />
-    <Piece Source="mf_p6_000000.vtu" />
-    <Piece Source="mf_p7_000000.vtu" />
   </PUnstructuredGrid>
 </VTKFile>

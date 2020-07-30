@@ -121,9 +121,17 @@ if rank == 0:
     start_time = time.time()
 # solve(R == 0, w, [], J=J_form,
 #       form_compiler_parameters={"keep_diagonal": True})
-problem = ProblemWithNullSpace(J_form, R, [], null_space)
-solver = SolverWithNullSpace()
-solver.solve(problem, w.vector())
+
+# problem = ProblemWithNullSpace(J_form, R, [], null_space)
+# solver = SolverWithNullSpace()
+# solver.solve(problem, w.vector())
+
+problem = NonlinearVariationalProblem(R, w, bcs=[], J=J_form)
+solver = NonlinearVariationalSolver(problem)
+solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
+solver.parameters['newton_solver']['linear_solver'] = 'mumps'
+solver.solve()
+
 if rank == 0:
     end_time = time.time()
     print("solved using {0} seconds".format(end_time - start_time))
