@@ -80,8 +80,9 @@ e3 = e3 / sqrt(inner(e3, e3))
 # defin tissue orientation on the spatial varying basis
 alpha = 46.274 / 180 * math.pi
 
-a1 = as_vector([cos(alpha), sin(alpha), 0])
-a2 = as_vector([cos(alpha), -sin(alpha), 0])
+a1 = cos(alpha) * e1 + sin(alpha) * e2
+a2 = cos(alpha) * e1 - sin(alpha) * e2
+
 
 # material parameters
 mu1 = 4.1543
