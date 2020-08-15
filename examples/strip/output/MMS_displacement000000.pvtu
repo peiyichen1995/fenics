@@ -16,9 +16,5 @@
     <Piece Source="MMS_displacement_p1_000000.vtu" />
     <Piece Source="MMS_displacement_p2_000000.vtu" />
     <Piece Source="MMS_displacement_p3_000000.vtu" />
-    <Piece Source="MMS_displacement_p4_000000.vtu" />
-    <Piece Source="MMS_displacement_p5_000000.vtu" />
-    <Piece Source="MMS_displacement_p6_000000.vtu" />
-    <Piece Source="MMS_displacement_p7_000000.vtu" />
   </PUnstructuredGrid>
 </VTKFile>

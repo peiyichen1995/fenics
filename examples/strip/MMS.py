@@ -116,8 +116,14 @@ psi = psi_bar + psi_theta + psi_p
 R = derivative(psi * dx - dot(b, u) * dx, w, TestFunction(W))
 J_form = derivative(R, w, TrialFunction(W))
 
-solve(R == 0, w, bcs, J=J_form,
-      form_compiler_parameters={"keep_diagonal": True})
+# solve(R == 0, w, bcs, J=J_form,
+#     form_compiler_parameters={"keep_diagonal": True})
+
+problem = NonlinearVariationalProblem(R, w, bcs, J=J_form)
+solver = NonlinearVariationalSolver(problem)
+solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
+solver.parameters['newton_solver']['linear_solver'] = 'superlu_dist'
+solver.solve()
 
 u_sol, p_sol, d_sol = w.split()
 
