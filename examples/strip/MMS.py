@@ -6,6 +6,8 @@ import os
 import numpy as np
 import math
 
+from problems import CustomProblem
+from solvers import CustomSolver
 from utils import my_cross, matrix_cofactor
 
 # Optimization options for the form compiler
@@ -125,7 +127,8 @@ solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
 solver.parameters['newton_solver']['linear_solver'] = 'superlu_dist'
 solver.solve()
 
-u_sol, p_sol, d_sol = w.split()
+
+u_sol, p_sol, d_sol = split(w)
 
 print("err:")
 u_e = interpolate(c, W.sub(0).collapse())
@@ -133,5 +136,5 @@ error = (u_sol - u_e)**2 * dx
 L2_err = sqrt(abs(assemble(error)))
 print(L2_err)
 
-file = File(output_dir + "MMS_displacement.pvd")
-file << u_sol
+# file = File(output_dir + "MMS_displacement.pvd")
+# file << u_sol

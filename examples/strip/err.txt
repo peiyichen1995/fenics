@@ -1,3 +1,8 @@
-5 5.743692384513571e-06
+n  err
+5  5.743692384513571e-06
 10 4.115354739465232e-07
 20 2.706389868713854e-08
+40 ...
+
+list of code and what have been done
+MMS geometry energy stored function which formulation which experimental data
