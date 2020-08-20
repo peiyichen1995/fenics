@@ -22,10 +22,10 @@ parameters["form_compiler"]["cpp_optimize"] = True
 parameters["form_compiler"]["representation"] = "uflacs"
 
 
-def geometry_3d(mesh_dir):
+def geometry_3d(mesh_dir, N):
     # mesh = Mesh(mesh_dir)
     # mesh = BoxMesh(Point(0.0, 0.0, 0.0), Point(10., 3, 0.5), 5, 5, 5)
-    mesh = UnitCubeMesh(40, 40, 40)
+    mesh = UnitCubeMesh(N, N, N)
     boundary_parts = MeshFunction('size_t', mesh, mesh.topology().dim() - 1)
     x0 = AutoSubDomain(lambda x: near(x[0], 0))
     x1 = AutoSubDomain(lambda x: near(x[0], 1))
@@ -50,7 +50,7 @@ def geometry_3d(mesh_dir):
 output_dir = "./output/"
 mesh_dir = "./mesh/"
 
-mesh, facet_function = geometry_3d(mesh_dir + "mesh.xml")
+mesh, facet_function = geometry_3d(mesh_dir + "mesh.xml", 20)
 n = FacetNormal(mesh)
 gdim = mesh.geometry().dim()
 dx = Measure("dx")
@@ -123,8 +123,16 @@ J_form = derivative(R, w, TrialFunction(W))
 
 problem = NonlinearVariationalProblem(R, w, bcs, J=J_form)
 solver = NonlinearVariationalSolver(problem)
-solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
-solver.parameters['newton_solver']['linear_solver'] = 'superlu_dist'
+
+solver.parameters['nonlinear_solver'] = 'snes'
+solver.parameters["snes_solver"]["maximum_iterations"] = 50
+solver.parameters["snes_solver"]["report"] = True
+
+solver.parameters["snes_solver"]['linear_solver'] = 'superlu_dist'
+
+
+# solver.parameters['newton_solver']['relative_tolerance'] = 1e-6
+# solver.parameters['newton_solver']['linear_solver'] = 'superlu_dist'
 solver.solve()
 
 

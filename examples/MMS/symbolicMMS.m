@@ -36,9 +36,11 @@ C_bar_cof = det(C_bar)*C_bar_inv;
 
 W_bar = mu1*trace(C_bar) + mu2*(trace(C_bar_cof))^(3/2);
 
-W_J = mu3*(J^beta3 + J^(-beta3));
+W_J = mu3*(d^beta3 + d^(-beta3));
 
-W = W_bar + W_J +p*(J-d);
+% W = W_bar + W_J +p*(J-d);
+
+W = W_bar + W_J;
 
 PK1 = [diff(W,F(1,1)), diff(W,F(1,2)), diff(W,F(1,3));
     diff(W,F(2,1)), diff(W,F(2,2)), diff(W,F(2,3));
