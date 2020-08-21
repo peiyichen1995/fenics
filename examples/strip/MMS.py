@@ -50,7 +50,7 @@ def geometry_3d(mesh_dir, N):
 output_dir = "./output/"
 mesh_dir = "./mesh/"
 
-mesh, facet_function = geometry_3d(mesh_dir + "mesh.xml", 20)
+mesh, facet_function = geometry_3d(mesh_dir + "mesh.xml", 40)
 n = FacetNormal(mesh)
 gdim = mesh.geometry().dim()
 dx = Measure("dx")
